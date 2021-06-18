@@ -20,8 +20,113 @@
                         <div class="dropdown-divider"></div>
                         {% csrf_token %}
                         <div class="row">
-                            {{ form.as_p }}
+                            {#{ form.as_p }#}
                         </div>
+                        <br><h5>Datos del Proveedor <i class="fa fa-user"></i></h5> <br><div class="row"></div>
+                                        <div class="row">
+
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.descripcion.label}}</div>
+                                                <div class="col-md-6">{{form.descripcion}}</div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.contacto.label}}</div>
+                                                <div class="col-md-6">{{form.contacto}}</div>
+                                            </div>
+                                            <hr>
+
+                                            <div class="col-md-3">
+                                                <div class="col-md-6">{{form.estado.label}}</div>
+                                                <div class="col-md-6">{{form.estado}}</div>
+                                            </div>
+                                        </div><br>                                   
+                                        <div class="dropdown-divider"></div>
+                                        <br><h5>Contacto <i class="fas fa-phone"></i></h5> <br><div class="row"></div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.telefono.label}}</div>
+                                                <div class="col-md-6">{{form.telefono}}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.email.label}}</div>
+                                                <div class="col-md-6">{{form.email}}</div>
+                                            </div>
+                                        </div><br>
+
+                                        <div class="dropdown-divider"></div>
+                                       <br><h5>Ubicación <i class="fas fa-home"></i></h5> <br><div class="row">
+                                            
+                                        <div class="row">
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <div class="col-md-6">
+                                                <div class="col-md-12">Provincia*</div>
+                                                <div class="col-md-6">
+                                                    <select name="provincia" id="id_provincia" class="form-control from-control-sm">
+                                                        <option value="0">-------</option>
+                                                        {% for item in provincias %}
+                                                        <option value="{{item.id}}">{{item.nombre_provincia}}</option>
+                                                        {% endfor%}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-12">Localidad*</div>
+                                                <div class="col-md-6">
+                                                    <select name="localidad" id="id_localidad" class="form-control from-control-sm">
+                                                        <option value="0">-------</option>
+                                                        {% for item in localidades %}
+                                                        <option value="{{item.id}}" data-chained="{{item.provincia.id}}">{{item.nombre_localidad}}</option>
+                                                        {% endfor%}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">Barrio*</div>
+                                                <div class="col-md-6">
+                                                    <select name="barrio" id="id_barrio" class="form-control from-control-sm">
+                                                        <option value="0">-------</option>
+                                                        {% for item in barrios %}
+                                                        <option value="{{item.id}}" data-chained="{{item.localidad.id}}">{{item.nombre_barrio}}</option>
+                                                        {% endfor%}
+                                                    </select>
+                                                </div>
+                                            </div>                             
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <br>  
+                                            <div class="col-md-6">
+                                                <div class="col-md-12">{{form.calle.label}}</div>
+                                                <div class="col-md-12">{{form.calle}}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.altura.label}}</div>
+                                                <div class="col-md-6">{{form.altura}}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.manzana.label}}</div>
+                                                <div class="col-md-6">{{form.manzana}}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.departamento.label}}</div>
+                                                <div class="col-md-6">{{form.departamento}}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.piso.label}}</div>
+                                                <div class="col-md-6">{{form.piso}}</div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="col-md-6">{{form.observacion.label}}</div>
+                                                <div class="col-md-6">{{form.observacion}}</div>
+                                            </div>
+                                        </div>
                         <div class="dropdown-divider"></div>
                         <div class="row">
                             <div class="col">
@@ -44,6 +149,18 @@
 </div> 
 
 <script>
+    $(function() {
+        $("#id_provincia").val("{{ obj.localidad.provincia.id }}").change();
+        $("#id_localidad").val("{{ obj.localidad.id }}").change();
+        $("#id_localidad").chained("#id_provincia");
+
+        $("#id_localidad").val("{{ obj.barrio.localidad.id }}").change();
+        $("#id_barrio").val("{{ obj.barrio.id }}").change();
+        $("#id_barrio").chained("#id_localidad");
+    });
+</script>
+
+<script> 
 $(function() {
 
     var url = $("form").attr("action");                             //Inicializar variable para saber si es un nuevo o editar          

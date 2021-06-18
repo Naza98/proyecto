@@ -26,9 +26,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for ventas in object_list %}
-                        <th scope="row">{{ ventas.fecha }}</th>
-                        <th scope="row">{{ ventas.cantidad_ventas }}</th>
+                    {% for venta in ventas %}
+                        <th scope="row">{{ venta.fecha }}</th>
+                        <th scope="row">{{ venta.total }}</th>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -39,7 +39,7 @@
 </div>
 {% endblock %}
 
-{% block js %}
+{% block js_page %}
            <!-- bootstrap-daterangepicker -->
            <script src="{% static 'vendors/moment/min/moment.min.js' %}"></script>
            <script src="{% static 'vendors/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
@@ -47,18 +47,18 @@
 
            <script>
 
-               var ventas = [];
+               var ventas_total = [];
                var ventas_mostrar = [];
                var myObject = new Object();
                var fechas = [];
                var sucursal = ''
                var totales = 0 
 
-              {% for v in object_list %}
+              {% for v in ventas %}
                 fechas.push('{{ v.fecha }}')
                 ventas_mostrar.push(parseInt('{{ v.total }}'))
               {% endfor %}
-               console.log(ventas);
+               //console.log(ventas);
                $('#id_texto_buscar').daterangepicker({
                           locale: {
                                  "format": "DD/MM/YYYY",

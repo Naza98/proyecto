@@ -1,3 +1,4 @@
+from domicilios.models import Provincia, Localidad, Barrio
 from django.shortcuts import render,redirect
 from django.views import generic
 
@@ -23,7 +24,7 @@ class ClienteView(SinPrivilegios, generic.ListView):
     queryset = Cliente.objects.filter(estado=True).exclude(nombres="final")
     obj = queryset
     context_object_name = "obj"
-    permission_required="cmp.view_cliente"
+    permission_required="fac.view_cliente"
 
 
 class VistaBaseCreate(SuccessMessageMixin,SinPrivilegios, \
@@ -52,8 +53,12 @@ class ClienteNew(VistaBaseCreate):
     success_url= reverse_lazy("fac:cliente_list")
     permission_required="fac.add_cliente"
 
-   # def get_success_url(self):
-    #    return '/domicilios/new/' + str(self.object.pk)
+    def get_context_data(self, **kwargs):
+        context = super(ClienteNew, self).get_context_data(**kwargs)
+        context["provincias"] = Provincia.objects.all()
+        context["localidades"] = Localidad.objects.all()
+        context["barrios"] = Barrio.objects.all()
+        return context
 
 
 
@@ -65,23 +70,15 @@ class ClienteEdit(VistaBaseEdit):
     permission_required="fac.change_cliente"
 
 
-    def get(self, request, *args, **kwargs):
-        print("sobre escribir get en editar")
+    def get_context_data(self, **kwargs):
+        pk = self.kwargs.get('pk')
 
-        print(request)
-        
-        try:
-            t = request.GET["t"]
-        except:
-            t = None
-
-        print(t)
-        self.object = self.get_object()
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        context = self.get_context_data(object=self.object, form=form,t=t)
-        print(form_class,form,context)
-        return self.render_to_response(context)
+        context = super(ClienteEdit, self).get_context_data(**kwargs)
+        context["provincias"] = Provincia.objects.all()
+        context["localidades"] = Localidad.objects.all()
+        context["barrios"] = Barrio.objects.all()
+        context["obj"] = Cliente.objects.filter(pk=pk).first()
+        return context
 
 
 @login_required(login_url="/login/")
@@ -258,28 +255,12 @@ def borrar_detalle_factura(request, id):
 
 #-----------------------Informes estadisticos-------------------------------#
 
-class VentaReportLineListView(generic.ListView):
-
-    queryset = FacturaEnc.objects.filter(fecha__year=datetime.now().year).order_by('-fecha')
-    template_name = 'fac/informes_estadisticos/venta_report_line.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(VentaReportLineListView, self).get_context_data(**kwargs)
-        ventas = FacturaEnc.objects.filter(fecha__year=datetime.now().year)
-        ventas_enviar = []
-        for venta in ventas:
-            if venta.estado:
-                a = {
-                    'cantidad_ventas': venta.total,
-                    'fecha': str(venta.fecha).split('-')[2] + '/' + str(venta.fecha).split('-')[1] + '/' + str(venta.fecha).split('-')[0] #FECHA
-                }
-                ventas_enviar.append(a)
-        context['ventas'] = ventas_enviar
-        return context
-
-'''
 def GraficoVentas(request):
 
-    ventas = FacturaEnc.objects.all()        
+    ventas = FacturaEnc.objects.filter(fecha__year=datetime.now().year).order_by('fecha')
+    template_name = 'fac/informes_estadisticos/venta_report_line.html'
+    context = {"ventas":ventas}
 
-'''
+    return render(request, template_name, context)
+
+

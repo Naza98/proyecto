@@ -16,6 +16,7 @@ from .models import Proveedor, ComprasEnc, ComprasDet
 from cmp.forms import ProveedorForm,ComprasEncForm
 from bases.views import SinPrivilegios
 from inv.models import Producto
+from domicilios.models import Provincia, Localidad, Barrio
 
 
 class ProveedorView(SinPrivilegios, generic.ListView):
@@ -41,6 +42,13 @@ class ProveedorNew(SuccessMessageMixin, SinPrivilegios,\
         #print(self.request.user.id)
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super(ProveedorNew, self).get_context_data(**kwargs)
+        context["provincias"] = Provincia.objects.all()
+        context["localidades"] = Localidad.objects.all()
+        context["barrios"] = Barrio.objects.all()
+        return context
+
 
 class ProveedorEdit(SuccessMessageMixin, SinPrivilegios,\
                    generic.UpdateView):
@@ -56,6 +64,16 @@ class ProveedorEdit(SuccessMessageMixin, SinPrivilegios,\
         form.instance.um = self.request.user.id    #'''Lineas de validaciones'''
         print(self.request.user.id)
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        pk = self.kwargs.get('pk')
+
+        context = super(ProveedorEdit, self).get_context_data(**kwargs)
+        context["provincias"] = Provincia.objects.all()
+        context["localidades"] = Localidad.objects.all()
+        context["barrios"] = Barrio.objects.all()
+        context["obj"] = Proveedor.objects.filter(pk=pk).first()
+        return context    
 
 
 @login_required(login_url="/login/")
@@ -190,7 +208,7 @@ def compras(request,compra_id=None):
 
 
     return render(request, template_name, contexto)
-
+    
 
 class CompraDetDelete(SinPrivilegios, generic.DeleteView):
     permission_required = "cmp.delete_comprasdet"

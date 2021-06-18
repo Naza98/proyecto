@@ -1,5 +1,5 @@
 from django.db import models
-
+from domicilios.models import Barrio
 #Para los signals
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -9,25 +9,18 @@ from bases.models import ClaseModelo
 from inv.models import Producto
 
 class Proveedor(ClaseModelo):
-    descripcion=models.CharField(
-        max_length=100,
-        unique=True
-        )
-    direccion=models.CharField(
-        max_length=250,
-        null=True, blank=True
-        )
-    contacto=models.CharField(
-        max_length=100
-    )
-    telefono=models.CharField(
-        max_length=10,
-        null=True, blank=True
-    )
-    email=models.CharField(
-        max_length=250,
-        null=True, blank=True
-    )
+    descripcion=models.CharField(max_length=100, unique=True)
+    contacto=models.CharField(max_length=100)
+    telefono=models.CharField(max_length=10,null=True, blank=True, unique=True)
+    email=models.EmailField(max_length=250,null=True, blank=True, unique=True)
+    barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE)
+
+    calle = models.CharField(max_length=300, blank=True, null=True)
+    altura = models.CharField(max_length=300, blank=True, null=True)
+    manzana = models.CharField(max_length=300, blank=True, null=True)
+    departamento = models.CharField(max_length=300, blank=True, null=True)
+    piso = models.CharField(max_length=300, blank=True, null=True)
+    observacion = models.CharField(max_length=600, blank=True, null=True)
 
     def __str__(self):
         return '{}'.format(self.descripcion)

@@ -1,4 +1,4 @@
-from domicilios.models import Domicilio
+from domicilios.models import Barrio
 from django.db import models
 
 #Para los signals
@@ -33,10 +33,10 @@ class Cliente(ClaseModelo):
         (Libreta_Civica, 'LC')
     ]
 
-    NAT='Natural'
+    NAT='Física'
     JUR='Jurídica'
     TIPO_CLIENTE = [
-        (NAT,'Natural'),
+        (NAT,'Física'),
         (JUR,'Jurídica')
     ]
 
@@ -49,7 +49,16 @@ class Cliente(ClaseModelo):
     celular = models.CharField(max_length=20, null=True, blank=True, unique=True)
     email = models.EmailField(max_length=200, unique=True)
     tipo=models.CharField(max_length=10, choices=TIPO_CLIENTE, default=NAT)
-    #domicilio = models.ForeignKey(Domicilio, on_delete=models.CASCADE)
+    barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE)
+
+    calle = models.CharField(max_length=300, blank=True, null=True)
+    altura = models.CharField(max_length=300, blank=True, null=True)
+    manzana = models.CharField(max_length=300, blank=True, null=True)
+    departamento = models.CharField(max_length=300, blank=True, null=True)
+    piso = models.CharField(max_length=300, blank=True, null=True)
+    observacion = models.CharField(max_length=600, blank=True, null=True)
+
+    
 
     def __str__(self):
         return '{} {}'.format(self.apellidos,self.nombres)
