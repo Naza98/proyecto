@@ -137,9 +137,9 @@ class Movimiento(models.Model):
     cantidad = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        verbose_name = 'Historial de precios de productos'
-        verbose_name_plural = 'Historial de precios de productos'
-        db_table = 'Historial de precios de productos'
+        verbose_name = 'Movimientos'
+        verbose_name_plural = 'Movimientos'
+        db_table = 'Movimientos'
 
 
 class Motivo(models.Model):

@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin,\
 from django.views import generic
 from datetime import datetime
 from fac.models import FacturaEnc, FacturaDet
+from inv.models import Producto
+
 
 
 class MixinFormInvalid:
@@ -42,3 +44,16 @@ class HomeSinPrivilegios(LoginRequiredMixin, generic.TemplateView):
     login_url = "bases:login"
     template_name="bases/sin_privilegios.html"
 
+
+
+#---------------------------------------------------------------------#
+
+def total_ventas(request):
+
+    ventas = FacturaDet.objects.all().filter(facturaenc_id__in=FacturaEnc) \
+        .values('producto__nombre_producto', 'cantidad') \
+        .annotate(total=Sum('cantidad')).order_by('total')
+        
+    contexto = {'ventas':ventas}
+    template_name = 'bases/home.html'
+    return render(request,template_name,contexto)  

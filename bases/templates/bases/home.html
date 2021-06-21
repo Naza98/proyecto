@@ -3,72 +3,38 @@
 
 {% block page_content %}
 
-<div class="row">
-	<div class="col-md">
-		<div class="card card-body">
-			<h5>Usuario activo :</h5>
-			<hr>
-			<p><b> {{request.user.username}}</b></p>
-			{% if request.user.email %}
-			<p><b>Email: {{request.user.email}}</b></p>
-			{% endif %}
-
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'cmp:compras_new' %}">Nueva Compra</a>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'fac:factura_new' %}">Nueva Venta</a>
-
-		</div>
-	</div>
-
-	<div class="col-md">
-		<div class="card card-body text-center">
-			<h5>Total de Ventas</h5>
-			<hr>
-			<h1 style="text-align: center;padding: 10px"> ${{ ventas.total }} </h1>
-		</div>
-	</div>
-
-	<div class="col-md">
-		<div class="card card-body text-center">
-			<h5>Total de compras</h5>
-			<hr>
-			<h1 style="text-align: center;padding: 10px"> ${{ FacturaEnc.total }}</h1>
-		</div>
-	</div>
-</div>
-
-<div id="container" style="width: 50%; height: 50%;">
-	<canvas id="myChart" width="50" height="50"></canvas>
+<div id="container" style="width: 40%; height: 40%;">
+	<canvas id="myChart" max-width="700px"></canvas>
 </div>
 
 {% endblock  %}
 
 {% block js_page %}
 <script>
+
 	var ctx = document.getElementById('myChart');
 	var myChart = new Chart(ctx, {
 		type: 'bar',
 		data: {
-			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+			labels: ['prod1', 'prod1', 'prod1', 'prod1', 'prod1'], //nombre de los productos
 			datasets: [{
-				label: '# of Votes',
-				data: [12, 19, 3, 5, 2, 3],
+				label: 'Productos mas vendidos', //nombre de los productos
+				data: [12, 19, 3, 5, 2],  		//cantidad de vendidos
 				backgroundColor: [
-					'rgba(255, 99, 132, 0.2)',
-					'rgba(54, 162, 235, 0.2)',
-					'rgba(255, 206, 86, 0.2)',
-					'rgba(75, 192, 192, 0.2)',
-					'rgba(153, 102, 255, 0.2)',
-					'rgba(255, 159, 64, 0.2)'
+					'rgba(255, 99, 132, 0.5)',
+					'rgba(54, 162, 235, 0.5)',
+					'rgba(255, 206, 86, 0.5)',
+					'rgba(75, 192, 192, 0.5)',
+					'rgba(153, 102, 255, 0.5)',
 				],
 				borderColor: [
-					'rgba(255, 99, 132, 1)',
-					'rgba(54, 162, 235, 1)',
-					'rgba(255, 206, 86, 1)',
-					'rgba(75, 192, 192, 1)',
-					'rgba(153, 102, 255, 1)',
-					'rgba(255, 159, 64, 1)'
+					'rgba(255, 99, 132, 3)',
+					'rgba(54, 162, 235, 3)',
+					'rgba(255, 206, 86, 3)',
+					'rgba(75, 192, 192, 3)',
+					'rgba(153, 102, 255, 3)',
 				],
-				borderWidth: 1
+				borderWidth: 2
 			}]
 		},
 		options: {

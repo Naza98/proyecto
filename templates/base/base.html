@@ -132,6 +132,9 @@
 
             <h6 class="collapse-header">Salidas</h6>
             <a class="collapse-item" href="{% url 'fac:factura_list' %}">Ventas</a>
+
+            <h6 class="collapse-header">Ajustes de inventario</h6>
+            <a class="collapse-item" href="#">Ajustes</a>
           </div>
         </div>
       </li>
@@ -146,7 +149,22 @@
         <div id="collapseDevoluciones" class="collapse" aria-labelledby="headingUtilities"
           data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#">Devoluciones</a>
+            <a class="collapse-item" href="{% url 'fac:devolucion_producto' %}">Devoluciones</a>
+          </div>
+        </div>
+      </li>
+
+      <!--Presupuestos-->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePresupuestos"
+          aria-expanded="true" aria-controls="collapsePresupuestos">
+          <i class="fas fa-receipt"></i>
+          <span>Presupuestos</span>
+        </a>
+        <div id="collapsePresupuestos" class="collapse" aria-labelledby="headingUtilities"
+          data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <a class="collapse-item" href="#">Presupuestos</a>
           </div>
         </div>
       </li>
@@ -162,8 +180,9 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="#"> Productos más vendidos</a>
-            <a class="collapse-item" href="#"> Informe de ventas</a>
+            <a class="collapse-item" href="{% url 'fac:ventas_informe' %}"> Informe de ventas</a>
             <a class="collapse-item" href="#"> Actualización de precios</a>
+            <a class="collapse-item" href="{% url 'fac:total' %}"> Totales: Compras-Ventas</a>
           </div>
         </div>
       </li>
@@ -400,7 +419,7 @@
                 <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
               </div>
             </li>  -->
-
+            <div id="reloj"></div>
             <div class="topbar-divider d-none d-sm-block"></div>
 
             <!-- Nav Item - User Information -->
@@ -510,6 +529,25 @@
           $(document).ready(function () {
             jQuery.datetimepicker.setLocale('es');
           });
+        </script>
+
+        <script>
+          function muestraReloj() {
+            var fechaHora = new Date();
+            var horas = fechaHora.getHours();
+            var minutos = fechaHora.getMinutes();
+            var segundos = fechaHora.getSeconds();
+
+            if(horas < 10) { horas = '0' + horas; }
+            if(minutos < 10) { minutos = '0' + minutos; }
+            if(segundos < 10) { segundos = '0' + segundos; }
+
+            document.getElementById("reloj").innerHTML = horas+':'+minutos+':'+segundos;
+          }
+
+          window.onload = function() {
+            setInterval(muestraReloj, 1000);
+          }
         </script>
 
         {% block control_modal%}

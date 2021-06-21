@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Sum
 from domicilios.models import Provincia, Localidad, Barrio
 from django.shortcuts import render,redirect
 from django.views import generic
@@ -17,6 +18,7 @@ from .models import Cliente, FacturaEnc, FacturaDet
 from .forms import ClienteForm
 import inv.views as inv
 from inv.models import Producto
+from cmp.models import ComprasEnc
 
 class ClienteView(SinPrivilegios, generic.ListView):
     model = Cliente
@@ -213,6 +215,7 @@ def facturas(request,id=None):
         
         if det:
             det.save()
+            messages.success(request, "Registro agregado correctamente")
         
         return redirect("fac:factura_edit",id=id)
 
@@ -251,6 +254,20 @@ def borrar_detalle_factura(request, id):
     
     return render(request,template_name,context)
 
+#-----------------------Devoluciones-------------------------------#
+
+class DevolucionProducto(SinPrivilegios,\
+     generic.ListView):
+     
+    model = FacturaEnc
+    template_name = 'fac/devoluciones.html'
+    q1 = FacturaEnc.objects.all()
+    obj = q1
+    context_object_name = "obj"
+    permission_required="fac.view_facturaenc"
+
+
+
 
 
 #-----------------------Informes estadisticos-------------------------------#
@@ -264,3 +281,13 @@ def GraficoVentas(request):
     return render(request, template_name, context)
 
 
+def CmpFac(request):
+
+    compras = ComprasEnc.objects.annotate(total_compras=Sum('total'))     
+    ventas = FacturaEnc.objects.annotate(total_ventas=Sum('total'))     
+    template_name = 'fac/informes_estadisticos/totales.html'
+    context = {
+        "ventas":ventas,
+        "compras":compras
+    }
+    return render(request, template_name, context)

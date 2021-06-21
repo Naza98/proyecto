@@ -1,0 +1,66 @@
+{% extends 'base/base.html' %}
+
+{% block page_content %}
+<div class="card shadow mb-4">
+  <!-- Card Header - Dropdown -->
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">Módulo de devoluciones</h6> 
+  </div>
+  <!-- Card Body -->
+  <div class="card-body">
+    <div class="col-md-12">
+        <div class="col-md-12">---Buscar y seleccionar N° de Factura---</div>
+        <div class="col-md-6">
+            <select name="factura" id="id_facturaenc" class="form-control from-control-sm">
+                <option value="0">-------</option>
+                {% for item in obj %}
+                <option value="{{item.id}}">{{item.id}}</option>
+                {% endfor%}
+            </select>
+        </div>
+    </div>
+        
+  </div>
+</div>
+{% endblock %}
+{% block js_page %}
+<script>
+  // Call the dataTables jQuery plugin
+  $(document).ready(function() {
+    $('.table').DataTable({
+      "language": {
+        "sProcessing": "Procesando...",
+        "sLengthMenu": "Mostrar _MENU_ registros",
+        "sZeroRecords": "No se encontraron resultados",
+        "sEmptyTable": "Ningún dato disponible en esta tabla",
+        "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sSearch": "Buscar:",
+        "sUrl": "",
+        "sInfoThousands": ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+            "sFirst": "<span class='fa fa-angle-double-left'></span>",
+            "sLast": "<span class='fa fa-angle-double-right'></span>",
+            "sNext": "<span class='fa fa-angle-right'></span>",
+            "sPrevious": "<span class='fa fa-angle-left'></span>"
+        },
+        "oAria": {
+            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        }
+      }
+    });
+  });
+
+  $(function () {
+        $("#sidebarToggle").click();
+        $('#id_facturaenc').select2({
+            allowClear: true
+        });
+    });
+
+  </script>
+{% endblock %}
