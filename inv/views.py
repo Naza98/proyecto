@@ -3,15 +3,16 @@ from django.shortcuts import render, redirect
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib import messages
+from datetime import datetime
 
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required, permission_required
 
 
 from .models import Categoria,SubCategoria, Marca, \
-    Producto
+    Producto, TipoMovimiento, Movimiento
 from .forms import CategoriaForm, SubCategoriaForm, MarcaForm, \
-    ProductoForm
+    ProductoForm, MovimientoForm
 
 from bases.views import SinPrivilegios
 
@@ -331,6 +332,7 @@ class ProductoEdit(SuccessMessageMixin,SinPrivilegios,
 
     def form_valid(self, form):
         form.instance.um = self.request.user.id
+        form.instance.fm = datetime.now().date()
         return super().form_valid(form)
     
     def get_context_data(self, **kwargs):
@@ -363,3 +365,70 @@ def producto_inactivar(request, id):
         return redirect("inv:producto_list")
 
     return render(request,template_name,contexto)
+
+
+class HistorialPreciosProductos(SinPrivilegios,\
+     generic.ListView):
+
+    model = Producto
+    template_name = 'inv/historial_precios.html'
+    queryset = Producto.objects.filter(fm__isnull=False, um__isnull=False)
+    obj = queryset
+    context_object_name = "obj"
+    permission_required="inv.view_producto"
+
+
+class MovimientoView(SinPrivilegios, generic.ListView):
+    model = Movimiento
+    template_name = "movimientos/movimiento_list.html"
+    queryset = Movimiento.objects.all()
+    obj = queryset
+    context_object_name = "obj"
+    permission_required="inv.view_movimiento"
+
+
+class MovimientoNew(SuccessMessageMixin,SinPrivilegios,
+                   generic.CreateView):
+    model=Movimiento
+    template_name="movimientos/movimiento_form.html"
+    context_object_name = 'obj'
+    form_class=MovimientoForm
+    success_url= reverse_lazy("inv:movimiento_list")
+    success_message="Ajuste Realizado Satisfactoriamente"
+    permission_required="inv.add_movimiento"
+
+    def form_valid(self, form):                 
+        form.instance.uc = self.request.user #instancia el usuario que esta logueado, el que crea el registro
+        return super().form_valid(form)      #retorna la validacion 
+    
+    def get_context_data(self, **kwargs):
+        context = super(MovimientoNew, self).get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        context["tipo_movimiento"] = TipoMovimiento.objects.all()
+        return context
+
+
+
+class MovimientoEdit(SuccessMessageMixin,SinPrivilegios,
+                   generic.UpdateView):
+    model=Movimiento
+    template_name="movimientos/movimiento_form.html"
+    context_object_name = 'obj'
+    form_class=MovimientoForm
+    success_url= reverse_lazy("inv:movimiento_list")
+    success_message="Movimiento Editado Satisfactoriamente"
+    permission_required="inv.change_movimiento"
+
+    def form_valid(self, form):
+        form.instance.um = self.request.user.id
+        form.instance.fm = datetime.now().date()
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        pk = self.kwargs.get('pk')
+
+        context = super(MovimientoEdit, self).get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        context["tipo_movimiento"] = TipoMovimiento.objects.all()
+        context["obj"] = Movimiento.objects.filter(pk=pk).first()
+        return context

@@ -219,3 +219,10 @@ class CompraDetDelete(SinPrivilegios, generic.DeleteView):
     def get_success_url(self):
         compra_id=self.kwargs['compra_id']
         return reverse_lazy('cmp:compras_edit', kwargs={'compra_id': compra_id})
+
+
+def eliminar_detalle(request,id):
+    detalle = ComprasDet.objects.filter(pk=id)
+    detalle.delete()
+    messages.error(request, "Detalle Eliminado Correctamente")
+    return HttpResponse("ok")

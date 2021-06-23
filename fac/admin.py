@@ -16,6 +16,8 @@ class FacturaEncAdmin(admin.ModelAdmin):
         'sub_total',
         'descuento',
         'total',
+        'forma_pago',
+        'tipo_factura'
     ]
 
 

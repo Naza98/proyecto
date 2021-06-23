@@ -4,8 +4,10 @@ from .views import CategoriaView, CategoriaNew, CategoriaEdit, \
     categoria_inactivar, \
     SubCategoriaView, SubCategoriaNew, SubCategoriaEdit, subcategoria_inactivar, \
     MarcaView, MarcaNew, MarcaEdit, marca_inactivar, \
-    ProductoView, ProductoEdit, ProductoNew, producto_inactivar, ProductoDetail    
-    #UMView, UMNew, UMEdit, um_inactivar,\
+    ProductoView, ProductoEdit, ProductoNew, producto_inactivar, ProductoDetail, \
+    HistorialPreciosProductos, MovimientoView, MovimientoNew, MovimientoEdit
+
+from .reportes import historial_precios_productos    
 
 urlpatterns = [
     path('categorias/',CategoriaView.as_view(), name='categoria_list'),
@@ -30,7 +32,13 @@ urlpatterns = [
     path('productos/edit/<int:pk>',ProductoEdit.as_view(), name="producto_edit"),
     path('productos/inactivar/<int:id>',producto_inactivar, name="producto_inactivar"),
     path('productos/detalle/<int:pk>', ProductoDetail.as_view(), name='producto_detalle'),
+    path('productos/historial_precios',HistorialPreciosProductos.as_view(), name="historial_precios"),
+    path('productos/historial_precios_print_all', historial_precios_productos, name='historial_precios_print_all'),
 
+    #Movimientos
+    path('movimientos/',MovimientoView.as_view(), name="movimiento_list"),
+    path('movimientos/new',MovimientoNew.as_view(), name="movimiento_new"),
+    path('movimientos/edit/<int:pk>',MovimientoEdit.as_view(), name="movimiento_edit"),
     
     #path('um/',UMView.as_view(), name="um_list"),
     #path('um/new',UMNew.as_view(), name="um_new"),

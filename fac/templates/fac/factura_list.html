@@ -18,14 +18,14 @@
   <!-- Card Body -->
   <div class="card-body">
     <div class="row">
-      <div class="col-md-4">
-        <input type="text" class="form-class" name="f1" id="f1" readonly placeholder="Fecha Desde...">
+      <div class="col-md-3">
+        <input type="text" class="form-control" name="f1" id="f1" readonly placeholder="Fecha Desde...">
       </div>
-      <div class="col-md-4">
-        <input type="text" class="form-class" name="f2" id="f2" readonly placeholder="Fecha Hasta...">
+      <div class="col-md-3">
+        <input type="text" class="form-control" name="f2" id="f2" readonly placeholder="Fecha Hasta...">
       </div>
-      <div class="col-md-4">
-        <h5><p></p></h5><button class="btn btn-warning" type="button" id="btnPrint">Imprimir</button>
+      <div class="col-md-3">
+        <button class="btn btn-warning" type="button" id="btnPrint"><i class="fa fa-print"></i> Imprimir Reporte</button>
       </div>
     </div>
     <hr>
@@ -50,11 +50,12 @@
       data-locale="es-NI"
     >
     <thead>
-      <th data-sortable="true" data-field="id">No.</th>        
+      <th data-sortable="true" data-field="id">N°</th>        
       <th data-sortable="true" data-field="nombres">Cliente</th>
-      <th data-sortable="true" data-field="apellidos">Total</th>
+      <th data-sortable="true" data-field="total">Total</th>
       <th data-sortable="true" data-field="fecha">Fecha</th>
-      <th class="all">Usuario</th>
+      <th data-sortable="true" data-field="usuario">Usuario</th>
+      <!--<th class="all">Acciones</th>-->
     </thead>
     <tbody>
       {% for item in obj%}
@@ -63,12 +64,12 @@
         <td>{{ item.cliente }}</td>
         <td>${{ item.total }}</td>
         <td>{{ item.fecha }}</td>
-        <td>
-          {{item.uc}}
-         <!-- <a href="{% url 'fac:factura_edit' item.id %}" class="href btn btn-warning btn-circle">
-              <i class="far fa-edit"></i>
-          </a>-->
-        </td>
+        <td>{{ item.uc }}</td>
+        <!--<td>
+         <a href="{% url 'fac:factura_edit' item.id %}" class="href btn btn-warning">
+              <i class="far fa-edit"></i> Devolución
+          </a>
+        </td>-->
       </tr>
       {% endfor %}
     </tbody>

@@ -1,4 +1,3 @@
-from django.db.models.aggregates import Sum
 from domicilios.models import Provincia, Localidad, Barrio
 from django.shortcuts import render,redirect
 from django.views import generic
@@ -14,11 +13,12 @@ from django.contrib.auth import authenticate
 
 from bases.views import SinPrivilegios
 
-from .models import Cliente, FacturaEnc, FacturaDet
+from .models import Cliente, FacturaEnc, FacturaDet, FormaPago, TipoFactura
+from cmp.models import ComprasEnc
 from .forms import ClienteForm
 import inv.views as inv
-from inv.models import Producto
-from cmp.models import ComprasEnc
+from inv.models import Producto, TipoMovimiento, Movimiento
+from django.db.models import Sum
 
 class ClienteView(SinPrivilegios, generic.ListView):
     model = Cliente
@@ -52,7 +52,7 @@ class ClienteNew(VistaBaseCreate):
     model=Cliente
     template_name="fac/cliente_form.html"
     form_class=ClienteForm
-    success_url= reverse_lazy("fac:cliente_list")
+    success_url= 'reverse_lazy("fac:cliente_list")'
     permission_required="fac.add_cliente"
 
     def get_context_data(self, **kwargs):
@@ -134,18 +134,20 @@ def facturas(request,id=None):
 
     detalle = {}
     clientes = Cliente.objects.filter(estado=True)
+    forma_pago = FormaPago.objects.all()
+    tipo_factura = TipoFactura.objects.all()
     
     if request.method == "GET":
         enc = FacturaEnc.objects.filter(pk=id).first()
         if id:
             if not enc:
-                messages.error(request,'Factura No Existe')
+                messages.error(request,'Esta factura no Existe')
                 return redirect("fac:factura_list")
 
             usr = request.user
             if not usr.is_superuser:
                 if enc.uc != usr:
-                    messages.error(request,'Factura no fue creada por usuario')
+                    messages.error(request,'Esta factura no fue creada por el usuario activo')
                     return redirect("fac:factura_list")
 
         if not enc:
@@ -153,6 +155,8 @@ def facturas(request,id=None):
                 'id':0,
                 'fecha':datetime.today(),
                 'cliente':0,
+                'tipo_factura':0,
+                'forma_pago':0,
                 'sub_total':0.00,
                 'descuento':0.00,
                 'total': 0.00
@@ -163,24 +167,32 @@ def facturas(request,id=None):
                 'id':enc.id,
                 'fecha':enc.fecha,
                 'cliente':enc.cliente,
+                'tipo_factura':enc.tipo_factura,
+                'forma_pago':enc.forma_pago,
                 'sub_total':enc.sub_total,
                 'descuento':enc.descuento,
                 'total':enc.total
             }
 
         detalle=FacturaDet.objects.filter(factura=enc)
-        contexto = {"enc":encabezado,"det":detalle,"clientes":clientes}
+        contexto = {"enc":encabezado,"det":detalle,"clientes":clientes,"tipo_factura":tipo_factura, "forma_pago":forma_pago}
         return render(request,template_name,contexto)
     
     if request.method == "POST":
+        forma_pago = request.POST.get("forma_pago")
+        tipo_factura = request.POST.get("tipo_factura")
         cliente = request.POST.get("enc_cliente")
         fecha  = request.POST.get("fecha")
         cli=Cliente.objects.get(pk=cliente)
+        fp = FormaPago.objects.get(pk=forma_pago)
+        tf = TipoFactura.objects.get(pk=tipo_factura)
 
         if not id:
             enc = FacturaEnc(
                 cliente = cli,
-                fecha = fecha
+                fecha = fecha,
+                forma_pago = fp,
+                tipo_factura = tf
             )
             if enc:
                 enc.save()
@@ -192,7 +204,7 @@ def facturas(request,id=None):
                 enc.save()
 
         if not id:
-            messages.error(request,'No Puedo Continuar No Pude Detectar No. de Factura')
+            messages.error(request,'No es posible continuar, no se detectó el No. de Factura')
             return redirect("fac:factura_list")
         
         codigo = request.POST.get("codigo")
@@ -248,26 +260,15 @@ def borrar_detalle_factura(request, id):
 
         if user.is_superuser or user.has_perm("fac.sup_caja_facturadet"):
             det.delete()
+            messages.error(request, "Detalle Eliminado Correctamente")
             return HttpResponse("ok")
 
         return HttpResponse("Usuario no autorizado")
     
     return render(request,template_name,context)
 
-#-----------------------Devoluciones-------------------------------#
 
-class DevolucionProducto(SinPrivilegios,\
-     generic.ListView):
-     
-    model = FacturaEnc
-    template_name = 'fac/devoluciones.html'
-    q1 = FacturaEnc.objects.all()
-    obj = q1
-    context_object_name = "obj"
-    permission_required="fac.view_facturaenc"
-
-
-
+#------------------------Devoluciones--------------------------------------#
 
 
 #-----------------------Informes estadisticos-------------------------------#
@@ -279,6 +280,8 @@ def GraficoVentas(request):
     context = {"ventas":ventas}
 
     return render(request, template_name, context)
+
+
 
 
 def CmpFac(request):

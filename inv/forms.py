@@ -1,6 +1,8 @@
 from django import forms
+from django.forms import fields
+from django.forms.widgets import NumberInput
 
-from .models import Categoria, SubCategoria, Marca, Producto
+from .models import Categoria, SubCategoria, Marca, Producto, Movimiento
 
 
 class CategoriaForm(forms.ModelForm):
@@ -88,3 +90,21 @@ class ProductoForm(forms.ModelForm):
             })
         self.fields['ultima_compra'].widget.attrs['readonly'] = True
         self.fields['existencia'].widget.attrs['readonly'] = True
+
+
+
+class MovimientoForm(forms.ModelForm):
+
+    fecha = forms.DateField(required=True,
+    widget=NumberInput(attrs=({'type' : 'date'})))
+    
+    class Meta:
+        model=Movimiento
+        fields= ['producto', 'tipo_movimiento','fecha','cantidad', 'motivo']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update({
+                'class': 'form-control'
+            })

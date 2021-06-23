@@ -1,7 +1,8 @@
-#from decouple import AutoConfig
 from django.db import models
 
 from bases.models import ClaseModelo
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 
 '''
@@ -115,11 +116,11 @@ class Producto(ClaseModelo):
         verbose_name_plural = "Productos"
         unique_together = ('codigo','codigo_barra')
 
+#--------------------PARA LOS AJUSTES DE INVENTARIO Y DEVOLUCIONES--------------------------#
 
-
-class TipoMovimiento(models.Model):
+class TipoMovimiento(ClaseModelo):
     '''
-    alta, baja, compra, venta, ajuste_incremento, ajuste_disminucion
+    compra, venta, ajuste_incremento, ajuste_disminucion, rotura, perdida
     '''
     descripcion = models.CharField(max_length=300, null=False, blank=False)
 
@@ -129,12 +130,20 @@ class TipoMovimiento(models.Model):
         db_table = 'Tipo de movimientos'
 
 
-class Movimiento(models.Model):
+
+
+class Movimiento(ClaseModelo):
 
     producto = models.ForeignKey(Producto, null=False, blank=False, on_delete=models.CASCADE)
     tipo_movimiento = models.ForeignKey(TipoMovimiento, null=False, blank=False, on_delete=models.CASCADE)
     fecha = models.DateField(null=True, blank=True)
     cantidad = models.IntegerField(null=True, blank=True)
+    #En caso de que sea una devolucion, se debe especificar el motivo.
+    motivo = models.CharField(max_length=200, null=True, blank=True) 
+
+    def save(self):
+        self.motivo = self.motivo.upper()
+        super(Movimiento, self).save()
 
     class Meta:
         verbose_name = 'Movimientos'
@@ -142,30 +151,35 @@ class Movimiento(models.Model):
         db_table = 'Movimientos'
 
 
-class Motivo(models.Model):
- 
-    descripcion = models.CharField(max_length=100, help_text='Descripción del motivo', unique=True )
 
-    def __str__(self):
-        return '{}'.format(self.descripcion)
-    
-    def save(self):
-        self.descripcion = self.descripcion.upper()
-        super(Producto,self).save()
-    
-    class Meta:
-        verbose_name_plural = "Motivos"
+@receiver(post_save, sender=Movimiento)
+def aumento(sender,instance,**kwargs):
+    id_producto = instance.producto.id
+    id_tipo_movimiento = instance.tipo_movimiento.id
+    fecha=instance.fecha
+    cantidad=instance.cantidad
+
+    prod=Producto.objects.filter(pk=id_producto).first()
+    if id_tipo_movimiento == 1:
+        if prod:
+            cantidad = int(prod.existencia) + int(instance.cantidad)
+            prod.existencia = cantidad
+            prod.save()            
 
 
+@receiver(post_save, sender=Movimiento)
+def disminucion(sender,instance,**kwargs):
+    id_producto = instance.producto.id
+    id_tipo_movimiento = instance.tipo_movimiento.id
+    fecha=instance.fecha
+    cantidad=instance.cantidad
 
-class Devolucion(models.Model):
+    prod=Producto.objects.filter(pk=id_producto).first()
+    if id_tipo_movimiento == 2:
+        if prod:
+            cantidad = int(prod.existencia) - int(instance.cantidad)
+            prod.existencia = cantidad
+            prod.save()           
 
-    producto = models.ForeignKey(Producto, null=False, blank=False, on_delete=models.CASCADE)
-    moviento = models.ForeignKey(Movimiento, null=False, blank=False, on_delete=models.CASCADE)
-    motivo = models.ForeignKey(Motivo, null=False, blank=False, on_delete=models.CASCADE)
-    fecha = models.DateField(null=True, blank=True)
-    cantidad = models.IntegerField(null=False, blank=False)
+#---------------------------------FIN AJUSTE INVENTARIO----------------------------#
 
-    class Meta:
-        verbose_name_plural = 'Devoluciones'
-        db_table = 'Devoluciones'

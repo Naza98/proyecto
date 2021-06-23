@@ -8,6 +8,7 @@ from django.db.models import Sum
 
 from bases.models import ClaseModelo, ClaseModelo2
 from inv.models import Producto
+from django.core.exceptions import ValidationError
 
 class Cliente(ClaseModelo):
 
@@ -51,14 +52,12 @@ class Cliente(ClaseModelo):
     tipo=models.CharField(max_length=10, choices=TIPO_CLIENTE, default=NAT)
     barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE)
 
-    calle = models.CharField(max_length=300, blank=True, null=True)
-    altura = models.CharField(max_length=300, blank=True, null=True)
+    calle = models.CharField(max_length=300, blank=False, null=False)
+    altura = models.CharField(max_length=300, blank=False, null=False)
     manzana = models.CharField(max_length=300, blank=True, null=True)
     departamento = models.CharField(max_length=300, blank=True, null=True)
     piso = models.CharField(max_length=300, blank=True, null=True)
-    observacion = models.CharField(max_length=600, blank=True, null=True)
-
-    
+    observacion = models.CharField(max_length=600, blank=True, null=True)    
 
     def __str__(self):
         return '{} {}'.format(self.apellidos,self.nombres)
@@ -97,13 +96,17 @@ class FacturaEnc(ClaseModelo2):
     sub_total=models.FloatField(default=0)
     descuento=models.FloatField(default=0)
     total=models.FloatField(default=0)
-    #forma_pago = models.ForeignKey(FormaPago, on_delete=models.CASCADE)
-    #tipo_factura = models.ForeignKey(TipoFactura, on_delete=models.CASCADE)
+    forma_pago = models.ForeignKey(FormaPago, on_delete=models.CASCADE)
+    tipo_factura = models.ForeignKey(TipoFactura, on_delete=models.CASCADE)
 
     def __str__(self):
         return '{}'.format(self.id)
 
     def save(self):
+        if self.total == None  or self.descuento == None:
+            self.sub_total = 0
+            self.descuento = 0
+            
         self.total = self.sub_total - self.descuento
         super(FacturaEnc,self).save()
 
@@ -169,3 +172,21 @@ def detalle_fac_guardar(sender,instance,**kwargs):
 
 
 
+@receiver(post_delete, sender=FacturaDet)
+def detalle_venta_borrar(sender,instance, **kwargs):
+    id_producto = instance.producto.id
+    id_factura = instance.factura.id
+
+    enc = FacturaEnc.objects.filter(pk=id_factura).first()
+    if enc:
+        sub_total = FacturaDet.objects.filter(factura=id_factura).aggregate(Sum('sub_total'))
+        descuento = FacturaDet.objects.filter(factura=id_factura).aggregate(Sum('descuento'))
+        enc.sub_total=sub_total['sub_total__sum']
+        enc.descuento=descuento['descuento__sum']
+        enc.save()
+    
+    prod=Producto.objects.filter(pk=id_producto).first()
+    if prod:
+        cantidad = int(prod.existencia) + int(instance.cantidad)
+        prod.existencia = cantidad
+        prod.save()

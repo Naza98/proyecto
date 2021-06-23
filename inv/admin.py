@@ -1,10 +1,11 @@
 from django.contrib import admin
 
 from .models import Categoria, SubCategoria, Marca, Producto, \
-    TipoMovimiento, Movimiento, Motivo, Devolucion
+    TipoMovimiento, Movimiento
 
 class ProductoAdmin(admin.ModelAdmin):
     list_display = [
+        'codigo',
         'nombre_producto',
         'marca',
         'descripcion',
@@ -15,13 +16,28 @@ class ProductoAdmin(admin.ModelAdmin):
         'foto',
     ]
 
+class TipoMovimientoAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'descripcion'
+    ]
+
+
+class MovimientoAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'producto',
+        'tipo_movimiento',
+        'fecha',
+        'cantidad'
+    ]
+
 
 
 admin.site.register(Producto, ProductoAdmin)
 admin.site.register(Categoria)
 admin.site.register(SubCategoria)
 admin.site.register(Marca)
-admin.site.register(TipoMovimiento)
-admin.site.register(Movimiento)
-admin.site.register(Motivo)
-admin.site.register(Devolucion)
+admin.site.register(TipoMovimiento, TipoMovimientoAdmin)
+admin.site.register(Movimiento,MovimientoAdmin)
+

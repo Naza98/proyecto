@@ -1,0 +1,95 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        {% if obj %}
+        <form method="POST" role="form" class="form-inline" action="{% url 'inv:movimiento_edit' obj.pk %}" enctype="multipart/form-data" >
+        {% else %}
+        <form method="POST" role="form" class="form-inline" action="{% url 'inv:movimiento_new' %}"  enctype="multipart/form-data" >
+        {% endif %}
+            <div class="col-xl-12 col-md-12 mb-12">
+                {% if obj %} <!--Si existe un valor en obj, colocar en color amarillo-->
+                <div class="card border-left-warning shadow h-100 py-2">
+                {% else %} <!--Si no, en verde-->
+                <div class="card border-left-success shadow h-100 py-2">
+                {% endif %}
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            {% if obj %} Editar {% else %} Nuevo {% endif %} Movimiento
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        {% csrf_token %}
+                        <div class="row">
+                            {#{ form.as_p }#}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="col-md-6">Producto</div>
+                                <div class="col-md-6">
+                                    <select name="producto" id="id_producto" class="form-control from-control-sm">
+                                        <option value="0">-------</option>
+                                        {% for item in productos %}
+                                        <option value="{{item.id}}">{{item.nombre_producto}}, {{item.marca}}</option>
+                                        {% endfor%}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="col-md-6">Tipo de Movimiento</div>
+                                <div class="col-md-6">
+                                    <select name="tipo_movimiento" id="id_tipo_movimiento" class="form-control from-control-sm">
+                                        <option value="0">-------</option>
+                                        {% for item in tipo_movimiento %}
+                                        <option value="{{item.id}}">{{item.descripcion}}</option>
+                                        {% endfor%}
+                                    </select>
+                                </div>
+                            </div>                           
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="col-md-6">{{form.fecha.label}}</div>
+                                <div class="col-md-6">{{form.fecha}}</div>    
+                            </div> 
+
+                            <div class="col-md-6">
+                                <div class="col-md-6">{{form.cantidad.label}}</div>
+                                <div class="col-md-6">{{form.cantidad}}</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="col-md-6">{{form.motivo.label}}</div>
+                                <div class="col-md-6">{{form.motivo}}</div>
+                            </div>
+                                                    
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" class="btn btn-success"><span class="fa fa-save"></span> Guardar</button>
+                                <button type="button" class="btn btn-danger" onclick="return cerrar_modal()"> <span class="fa fa-undo"></span>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="far fa-calendar-plus fa-2x text-gray-300"></i>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("#id_producto").val("{{ obj.producto.id }}").change();
+        $("#id_tipo_movimiento").val("{{ obj.tipo_movimiento.id }}").change();
+    });
+</script>

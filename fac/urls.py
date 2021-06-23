@@ -1,7 +1,8 @@
 from django.urls import path, include
 
-from .views import (ClienteView,ClienteNew,ClienteEdit, DevolucionProducto,clienteInactivar,
-                    FacturaView, facturas, ProductoView, borrar_detalle_factura, GraficoVentas, CmpFac
+from .views import (ClienteView,ClienteNew,ClienteEdit,clienteInactivar,
+                    FacturaView, facturas, ProductoView, borrar_detalle_factura,
+                    GraficoVentas, CmpFac
                     )
 
 from .reportes import imprimir_factura_recibo, imprimir_factura_list
@@ -28,6 +29,6 @@ urlpatterns = [
     path('informes/line',GraficoVentas, name="ventas_informe"),
     path('informes/total',CmpFac, name="total"),
 
-    #Devolucion de productos
-    path('facturas/devolucion_producto',DevolucionProducto.as_view(), name="devolucion_producto"),
+
+    
 ]   

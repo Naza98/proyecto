@@ -87,7 +87,7 @@
                 <div class="project-content">
                     <b class="text-center">BR-SCF</b><br> 
                     <div class="derecha">
-                        Factura
+                        Factura {{enc.tipo_factura.descripcion}}
                     </div>
                     .......................................................................................................
                     <div class="derecha">
@@ -96,6 +96,7 @@
                             <b>Factura No.:</b>&nbsp;&nbsp;{{enc.id}}&nbsp;&nbsp;
                             <b>Fecha Fact:</b>&nbsp;&nbsp;{{enc.fecha}}&nbsp;&nbsp; <br>
                             <b>Cliente:</b>&nbsp;&nbsp;{{enc.cliente.id}}&nbsp;&nbsp;- {{enc.cliente}}<br>
+                            <b>Forma de Pago:</b>&nbsp;&nbsp;{{enc.forma_pago.descripcion}}&nbsp;&nbsp; <br>
                             <br><br>
                         </small>
                     </div>

@@ -31,7 +31,7 @@
                                             </div>
 
                                             <div class="col-md-6">
-                                                <div class="col-md-6">{{form.contacto.label}}</div>
+                                                <div class="col-md-6">Persona de contacto</div>
                                                 <div class="col-md-6">{{form.contacto}}</div>
                                             </div>
                                             <hr>
@@ -150,8 +150,8 @@
 
 <script>
     $(function() {
-        $("#id_provincia").val("{{ obj.localidad.provincia.id }}").change();
-        $("#id_localidad").val("{{ obj.localidad.id }}").change();
+        $("#id_provincia").val("{{ obj.barrio.localidad.provincia.id }}").change();
+        $("#id_localidad").val("{{ obj.barrio.localidad.id }}").change();
         $("#id_localidad").chained("#id_provincia");
 
         $("#id_localidad").val("{{ obj.barrio.localidad.id }}").change();

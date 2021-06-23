@@ -26,7 +26,7 @@ class ClienteForm(forms.ModelForm):
     def clean_numero_dni(self):
         numero_dni = self.cleaned_data['numero_dni']
         if numero_dni < 0:
-            raise ValidationError("Este número no puede tener valores negativos")
+            raise ValidationError("Este campo no puede contener valores negativos")
         return numero_dni      
 
     class Meta:

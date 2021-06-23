@@ -21,7 +21,9 @@
                                             {% if t %} En Factura {% endif %}
                                         </div>
                                         <div class="dropdown-divider"></div>
-                                        {% csrf_token %}
+                                        {% csrf_token %}  
+
+                                        
                                         <div class="row">
                                             {#{ form.as_p }#}
                                         </div>
@@ -198,34 +200,14 @@
 
 <script>
     $(function() {
-        $("#id_provincia").val("{{ obj.localidad.provincia.id }}").change();
-        $("#id_localidad").val("{{ obj.localidad.id }}").change();
+        $("#id_provincia").val("{{ obj.barrio.localidad.provincia.id }}").change();
+        $("#id_localidad").val("{{ obj.barrio.localidad.id }}").change();
         $("#id_localidad").chained("#id_provincia");
 
         $("#id_localidad").val("{{ obj.barrio.localidad.id }}").change();
         $("#id_barrio").val("{{ obj.barrio.id }}").change();
         $("#id_barrio").chained("#id_localidad");
     });
-</script>
-
-<script src="{% static 'SweetAlert2/sweetalert2.js' %}"></script>
-<script>
-    {% if form.errors %}
-
-        var errors = '';
-
-        {% for field in form %} 
-            {% for error in field.errors %}
-                errors += '{{ error }}\n'; 
-            {% endfor %} 
-        {% endfor %}
-
-        Swal.fire({
-            title: 'Error!',
-            text: errors,
-            icon: 'error'
-        }) 
-    {% endif %}
 </script>
 
 {% endblock %}

@@ -4,22 +4,21 @@
 <div class="card shadow mb-4">
   <!-- Card Header - Dropdown -->
   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-    <h6 class="m-0 font-weight-bold text-primary">Listado de Proveedor</h6>
+    <h6 class="m-0 font-weight-bold text-primary">Ajustes de inventario</h6> 
     <!--<div class="dropdown no-arrow">
       <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
         <div class="dropdown-header">Acciones:</div>
-        <a class="dropdown-item" onclick="return abrir_modal('{% url 'cmp:proveedor_new' %}')" href="#"><i class="far fa-calendar-plus"></i> Nuevo</a>
+        <a class="dropdown-item" onclick="return abrir_modal('{% url 'inv:movimiento_new' %}')" href="#"><i class="far fa-calendar-plus"></i> Nuevo Ajuste</a>
       </div>
     </div>-->
   </div>
   <!-- Card Body -->
-
   <div class="card-body">
     <div class="buttons-toolbar">
-      <a class="btn btn-success" onclick="return abrir_modal('{% url 'cmp:proveedor_new' %}')" href=""><i class="fa fa-plus"></i> Nuevo Proveedor </a>
+      <a class="btn btn-success" onclick="return abrir_modal('{% url 'inv:movimiento_new' %}')" href=""><i class="fa fa-plus"></i> Nuevo Movimiento </a>
     </div>
     {% if not obj %}
     <div class="alert alert-info">No se encontraron resultados</div>
@@ -36,27 +35,25 @@
       data-locale="es-NI"
     >
       <thead>
-        <th data-sortable="true" data-field="id">Id</th>
-        <th data-sortable="true" data-field="descripcion">Descripción</th>
-        <th data-sortable="true" data-field="direccion">Dirección</th>
-        <th data-sortable="true" data-field="telefono">Celular</th>
-        <th data-sortable="true" data-field="email">Email</th>
+        <th data-sortable="true" data-field="producto">Producto</th>
+        <th data-sortable="true" data-field="tipo de ajuste">Tipo de Ajuste</th>
+        <th data-sortable="true" data-field="motivo">Motivo</th>
+        <th data-sortable="true" data-field="fecha">Fecha</th>
+        <th data-sortable="true" data-field="cantidad">Cantidad</th>
         <th class="all">Acciones</th>
       </thead>
       <tbody>
         {% for item in obj%}
         <tr>
-          <td>{{ item.id }}</td>
-          <td>{{ item.descripcion }}</td>
-          <td>{{item.barrio.nombre_barrio}}, {{item.calle}} {{item.altura}}</td>
-          <td>{{ item.telefono }}</td>
-          <td>{{ item.email }}</td>
-          <!--<td>{{item.estado|yesno:"Activo,Inactivo"}}</td>-->
+          <td>{{ item.producto.nombre_producto }}, {{ item.producto.marca }}</td>
+          <td>{{ item.tipo_movimiento.descripcion }}</td>
+          <td>{{ item.motivo }}</td>
+          <td>{{ item.fecha }}</td>
+          <td>{{ item.cantidad }}</td>
           <td>
-            <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'cmp:proveedor_edit' item.id %}')"><i class="far fa-edit"></i></button>
-            <button class="btn btn-danger btn-circle" onclick="return abrir_modal('{% url 'cmp:proveedor_inactivar' item.id %}')">
-              <i class="far fa-trash-alt"></i>
-            </button>
+            <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'inv:movimiento_edit' item.id %}')">
+                <i class="far fa-edit"></i></button>
+                <a href="#" class="btn btn-danger btn-circle" role="button"><i class="far fa-trash-alt"></i></a>
           </td>
         </tr>
         {% endfor %}
