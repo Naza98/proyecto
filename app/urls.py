@@ -26,6 +26,6 @@ urlpatterns = [
     path('cmp/', include(('cmp.urls', 'cmp'), namespace='cmp')),
     path('fac/', include(('fac.urls', 'fac'), namespace='fac')),
     path('api/', include(('api.urls', 'api'), namespace='api')),
-]
 
-urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

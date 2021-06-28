@@ -1,11 +1,12 @@
 from django.urls import path
 
-from .views import CategoriaView, CategoriaNew, CategoriaEdit, \
+from .views import ActualizarPrecioTemplateView, CategoriaView, CategoriaNew, CategoriaEdit, \
     categoria_inactivar, \
     SubCategoriaView, SubCategoriaNew, SubCategoriaEdit, subcategoria_inactivar, \
     MarcaView, MarcaNew, MarcaEdit, marca_inactivar, \
     ProductoView, ProductoEdit, ProductoNew, producto_inactivar, ProductoDetail, \
     HistorialPreciosProductos, MovimientoView, MovimientoNew, MovimientoEdit
+    
 
 from .reportes import historial_precios_productos    
 
@@ -34,6 +35,8 @@ urlpatterns = [
     path('productos/detalle/<int:pk>', ProductoDetail.as_view(), name='producto_detalle'),
     path('productos/historial_precios',HistorialPreciosProductos.as_view(), name="historial_precios"),
     path('productos/historial_precios_print_all', historial_precios_productos, name='historial_precios_print_all'),
+    #para actualizar precios 
+    path('productos/actualizar_precios',  ActualizarPrecioTemplateView.as_view(), name='actualizar-precios'), 
 
     #Movimientos
     path('movimientos/',MovimientoView.as_view(), name="movimiento_list"),

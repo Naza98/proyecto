@@ -21,6 +21,7 @@
       <a class="btn btn-success" onclick="return abrir_modal('{% url 'inv:producto_new' %}')" href="#"><i class="fa fa-plus"></i> Nuevo Producto</a>
       <a href="{% url 'inv:historial_precios' %}" class="btn btn-info">Ver historial de precios</a>
       <a href="{% url 'inv:movimiento_list' %}" class="btn btn-warning">Realizar ajuste de inventario</a>
+      <a href="{% url 'inv:actualizar-precios' %}" class="btn btn-primary">Actualizar precios</a>
     </div>
     {% if not obj %}
     <div class="alert alert-info">No se encontraron resultados</div>

@@ -34,7 +34,7 @@ class ProveedorNew(SuccessMessageMixin, SinPrivilegios,\
     context_object_name = 'obj'
     form_class=ProveedorForm
     success_url= reverse_lazy("cmp:proveedor_list")
-    success_message="Proveedor Nuevo"
+    success_message="Registro Agregado Correctamente"
     permission_required="cmp.add_proveedor"
 
     def form_valid(self, form):

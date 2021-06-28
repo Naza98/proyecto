@@ -5,29 +5,7 @@ from django.forms.widgets import NumberInput
 from .models import Cliente
 
 
-class ClienteForm(forms.ModelForm):
-
-    fecha_nacimiento = forms.DateField(required=True,
-    widget=NumberInput(attrs=({'type' : 'date'})))
-
-    celular = forms.IntegerField(required=True)
-
-    def clean_celular(self):
-        celular = self.cleaned_data["celular"]
-        existe = Cliente.objects.filter(celular=celular).exists()
-
-        if existe:
-            raise ValidationError("Este número de celular ya existe")
-        return celular
-
-    numero_dni = forms.IntegerField(required=True,
-        widget=forms.NumberInput(attrs=({'placeholder':'Ingrese el número sin puntos, ni espacios'})))
-
-    def clean_numero_dni(self):
-        numero_dni = self.cleaned_data['numero_dni']
-        if numero_dni < 0:
-            raise ValidationError("Este campo no puede contener valores negativos")
-        return numero_dni      
+class ClienteForm(forms.ModelForm):    
 
     class Meta:
         model=Cliente
@@ -41,3 +19,25 @@ class ClienteForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
+    fecha_nacimiento = forms.DateField(required=True,
+    widget=NumberInput(attrs=({'type' : 'date'})))
+
+    celular = forms.CharField(required=True,
+    widget=NumberInput())
+
+    def clean_celular(self):
+        celular = self.cleaned_data['celular']
+        if int(celular) < 0:
+            raise ValidationError("Este campo no puede contener valores negativos")
+        return celular  
+
+    numero_dni = forms.IntegerField(required=True,
+        widget=forms.NumberInput(attrs=({'placeholder':'Ingrese el numero sin puntos, ni espacios'})))
+
+    def clean_numero_dni(self):
+        numero_dni = self.cleaned_data['numero_dni']
+        if numero_dni < 0:
+            raise ValidationError("Este campo no puede contener valores negativos")
+        return numero_dni  

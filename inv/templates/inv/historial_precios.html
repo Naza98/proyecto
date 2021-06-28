@@ -4,7 +4,7 @@
 <div class="card shadow mb-4">
   <!-- Card Header - Dropdown -->
   <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-    <h6 class="m-0 font-weight-bold text-primary">Historial de Precios de Venta</h6> 
+    <h6 class="m-0 font-weight-bold text-primary">Historial de Precios de Productos</h6> 
 
   </div>
   <!-- Card Body -->
@@ -15,24 +15,22 @@
     <table class="table table-striped table-hover dt-responsive nowrap" style="width:100%">
       <thead>
         <th>Producto</th>        
+        <th>Última Modificación</th>
         <th>Precio Anterior</th>
         <th>Precio Actual</th>
-        <th>Última Modificación</th>
-        <th>Usuario</th>
       </thead>
       <tbody>
         {% for item in obj%}
         <tr>
-          <td>{{ item.nombre_producto }}, {{ item.marca }}</td>
-          <td>${{ item.precio_anterior }}</td>
+          <td>{{ item.producto.nombre_producto }}, {{ item.producto.marca }}</td>
+          <td>{{ item.fecha_modificacion }}</td>
           <td>${{ item.precio }}</td>
-           <td>{{ item.fm }}</td>
-          <td>{{ item.uc }}</td>
+          <td><b>${{ item.producto.precio }}</b></td> 
         </tr>
         {% endfor %}
       </tbody>
     </table>
-    <a class="btn btn-primary" href="{% url 'inv:historial_precios_print_all' %}" target="reportes"><i class="fas fa-print"></i> Imprimir Historial de Precios</a>
+    <a class="btn btn-primary" href="{% url 'inv:historial_precios_print_all' %}" target="reportes"><i class="fas fa-print"></i> Imprimir Historial</a>
   </div>
 </div>
 {% endblock %}

@@ -16,21 +16,24 @@ class ProveedorForm(forms.ModelForm):
                 'class': 'form-control'
             })
 
+       #-------------------validacion para que no se repita el nombre del proveedor---------------- 
     def clean(self):
         try:
             sc = Proveedor.objects.get(
-                descripcion=self.cleaned_data["descripcion"].upper()
+                descripcion=self.cleaned_data["descripcion"].upper() #preguntamos por un objeto, donde la descripcion, sea igual la que tenemos en la bd
             )
 
-            if not self.instance.pk:
+            if not self.instance.pk:  
                 print("Registro ya existe")
-                raise forms.ValidationError("Registro Ya Existe")
-            elif self.instance.pk!=sc.pk:
+                raise forms.ValidationError("Este registro ya existe")
+            elif self.instance.pk!=sc.pk:                           #si se trata de editar uno que ya existe, por un valor que tambien ya existe
                 print("Cambio no permitido")
-                raise forms.ValidationError("Cambio No Permitido")
+                raise forms.ValidationError("Cambio no permitido, ya existe un registro con esta descripcion")
         except Proveedor.DoesNotExist:
             pass
         return self.cleaned_data
+       #-------------------validacion para que no se repita el nombre del proveedor----------------
+
 
 class ComprasEncForm(forms.ModelForm):
     fecha_compra = forms.DateInput()

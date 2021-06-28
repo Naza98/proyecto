@@ -1,4 +1,5 @@
 from django.db.models import query
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.urls import reverse_lazy
@@ -10,8 +11,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 
 from .models import Categoria,SubCategoria, Marca, \
-    Producto, TipoMovimiento, Movimiento
-from .forms import CategoriaForm, SubCategoriaForm, MarcaForm, \
+    Producto, TipoMovimiento, Movimiento, HistorialPreciosVenta
+from .forms import ActualizacionPrecioForm, CategoriaForm, SubCategoriaForm, MarcaForm, \
     ProductoForm, MovimientoForm
 
 from bases.views import SinPrivilegios
@@ -74,7 +75,7 @@ def categoria_inactivar(request, id):
     if request.method=='POST':
         prod.estado=False
         prod.save()
-        messages.error(request, 'Categoría Inactivada')
+        messages.error(request, 'Categoría Inactivada Satisfactoriamente')
         return redirect("inv:categoria_list")
 
     return render(request,template_name,contexto)
@@ -106,7 +107,7 @@ class SubCategoriaNew(SuccessMessageMixin,SinPrivilegios, generic.CreateView):
     context_object_name = "obj"
     form_class=SubCategoriaForm
     success_url=reverse_lazy("inv:subcategoria_list")
-    success_message="Sub Categoría Creada Satisfactoriamente"
+    success_message="Sub-Categoría Creada Satisfactoriamente"
     permission_required="inv.add_subcategoria"
 
     def form_valid(self, form):
@@ -120,7 +121,7 @@ class SubCategoriaEdit(SuccessMessageMixin,SinPrivilegios, generic.UpdateView):
     context_object_name = "obj"
     form_class=SubCategoriaForm
     success_url=reverse_lazy("inv:subcategoria_list")
-    success_message="Sub Categoría Actualizada Satisfactoriamente"
+    success_message="Sub-Categoría Actualizada Satisfactoriamente"
     permission_required="inv.change_subcategoria"
 
     def form_valid(self, form):
@@ -144,7 +145,7 @@ def subcategoria_inactivar(request, id):
     if request.method=='POST':
         prod.estado=False
         prod.save()
-        messages.error(request, 'Sub Categoría Inactivada')
+        messages.error(request, 'Sub Categoría Inactivada Satisfactoriamente')
         return redirect("inv:subcategoria_list")
 
     return render(request,template_name,contexto)
@@ -370,12 +371,17 @@ def producto_inactivar(request, id):
 class HistorialPreciosProductos(SinPrivilegios,\
      generic.ListView):
 
-    model = Producto
+    model = HistorialPreciosVenta
     template_name = 'inv/historial_precios.html'
-    queryset = Producto.objects.filter(fm__isnull=False, um__isnull=False)
+    queryset = HistorialPreciosVenta.objects.all().order_by('fecha_modificacion', 'producto__nombre_producto')
     obj = queryset
     context_object_name = "obj"
-    permission_required="inv.view_producto"
+    permission_required="inv.view_historial_precios_venta"
+
+    def get_context_data(self, **kwargs):
+        context = super(HistorialPreciosProductos, self).get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        return context
 
 
 class MovimientoView(SinPrivilegios, generic.ListView):
@@ -432,3 +438,69 @@ class MovimientoEdit(SuccessMessageMixin,SinPrivilegios,
         context["tipo_movimiento"] = TipoMovimiento.objects.all()
         context["obj"] = Movimiento.objects.filter(pk=pk).first()
         return context
+
+
+
+#-----------------------Actualizar precios----------------------------------#
+
+class ActualizarPrecioTemplateView(generic.TemplateView):
+
+    template_name = 'inv/producto_actualizar_precios.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ActualizarPrecioTemplateView, self)\
+            .get_context_data(**kwargs)
+        context['form'] = ActualizacionPrecioForm()
+        return context
+
+    def post(self, request, *args,  **kwargs):
+        busqueda = {}
+        form_producto_actualizar = ActualizacionPrecioForm(data=
+                                                           self.request.POST)
+        if form_producto_actualizar.is_valid():
+
+            if 'subcategoria' in form_producto_actualizar.data:
+                if form_producto_actualizar.data['subcategoria'] != '':
+                    busqueda['subcategoria__id'] = form_producto_actualizar.data['subcategoria']
+            productos = Producto.objects.filter(**busqueda)        
+            if 'variacion' in form_producto_actualizar.data:
+                if form_producto_actualizar.data['variacion'] == 'venta':
+                    if 'moneda' in form_producto_actualizar.data:
+                        if form_producto_actualizar.data['moneda'] == 'pesos':
+
+                            for producto in productos:
+                                resultado = str(int(producto.precio) + \
+                                                int(form_producto_actualizar.data[
+                                                        'numero']))
+
+                                historial_precio_venta = HistorialPreciosVenta(
+                                    producto=producto,
+                                    fecha_modificacion=datetime.now(),
+                                    precio=producto.precio)
+                                historial_precio_venta.save()
+
+                                producto.precio = resultado
+                                producto.save()
+                        else:
+                            for producto in productos:
+                                aumento = (int(producto.precio) *
+                                           int(form_producto_actualizar.
+                                               data['numero'])) / 100
+                                resultado = int(producto.precio) + \
+                                            int(aumento)
+
+                                historial_precio_venta = HistorialPreciosVenta(
+                                    producto=producto,
+                                    fecha_modificacion=datetime.now(),
+                                    precio=producto.precio)
+                                historial_precio_venta.save()
+
+                                producto.precio = resultado
+                                producto.save()
+
+            messages.success(self.request, 'Los precios de los productos se modificaron correctamente')
+            return HttpResponseRedirect('/inv/productos/')
+        else:
+            return render(self.request,
+                          'inv/producto_actualizar_precios.html',
+                          {'form': form_producto_actualizar})

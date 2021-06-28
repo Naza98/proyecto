@@ -1,6 +1,7 @@
 from domicilios.models import Provincia, Localidad, Barrio
 from django.shortcuts import render,redirect
 from django.views import generic
+from django.db.models.functions import Coalesce
 
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
@@ -29,31 +30,20 @@ class ClienteView(SinPrivilegios, generic.ListView):
     permission_required="fac.view_cliente"
 
 
-class VistaBaseCreate(SuccessMessageMixin,SinPrivilegios, \
+
+class ClienteNew(SuccessMessageMixin,SinPrivilegios, \
     generic.CreateView):
+    model=Cliente
+    template_name="fac/cliente_form.html"
     context_object_name = 'obj'
+    form_class=ClienteForm
+    success_url= reverse_lazy("fac:cliente_list")
     success_message="Registro Agregado Satisfactoriamente"
+    permission_required="fac.add_cliente"
 
     def form_valid(self, form):
         form.instance.uc = self.request.user
         return super().form_valid(form)
-
-class VistaBaseEdit(SuccessMessageMixin,SinPrivilegios, \
-    generic.UpdateView):
-    context_object_name = 'obj'
-    success_message="Registro Actualizado Satisfactoriamente"
-
-    def form_valid(self, form):
-        form.instance.um = self.request.user.id
-        return super().form_valid(form)
-
-
-class ClienteNew(VistaBaseCreate):
-    model=Cliente
-    template_name="fac/cliente_form.html"
-    form_class=ClienteForm
-    success_url= 'reverse_lazy("fac:cliente_list")'
-    permission_required="fac.add_cliente"
 
     def get_context_data(self, **kwargs):
         context = super(ClienteNew, self).get_context_data(**kwargs)
@@ -64,12 +54,19 @@ class ClienteNew(VistaBaseCreate):
 
 
 
-class ClienteEdit(VistaBaseEdit):
+class ClienteEdit(SuccessMessageMixin,SinPrivilegios, \
+    generic.UpdateView):
     model=Cliente
     template_name="fac/cliente_form.html"
+    context_object_name = 'obj'
     form_class=ClienteForm
     success_url= reverse_lazy("fac:cliente_list")
+    success_message="Registro Actualizado Satisfactoriamente"
     permission_required="fac.change_cliente"
+
+    def form_valid(self, form):
+        form.instance.um = self.request.user.id
+        return super().form_valid(form)
 
 
     def get_context_data(self, **kwargs):
@@ -268,8 +265,6 @@ def borrar_detalle_factura(request, id):
     return render(request,template_name,context)
 
 
-#------------------------Devoluciones--------------------------------------#
-
 
 #-----------------------Informes estadisticos-------------------------------#
 
@@ -286,11 +281,52 @@ def GraficoVentas(request):
 
 def CmpFac(request):
 
-    compras = ComprasEnc.objects.annotate(total_compras=Sum('total'))     
-    ventas = FacturaEnc.objects.annotate(total_ventas=Sum('total'))     
+    compras = ComprasEnc.objects.all().aggregate(total=Sum('total'))    
+    ventas = FacturaEnc.objects.all().aggregate(total=Sum('total'))         
     template_name = 'fac/informes_estadisticos/totales.html'
     context = {
         "ventas":ventas,
         "compras":compras
     }
     return render(request, template_name, context)
+
+
+'''
+def ProductosMasVendidos(request):
+    produ = FacturaDet.objects.all() \
+        .filter(factura_id__in=FacturaEnc) \
+        .values('producto__nombre_producto') \
+        .annotate(total=Sum('cantidad')).order_by('total')
+    
+    context = { "ProductosMasVendidos": produ }
+    return render(request, context)
+
+    .filter(factura_id__in=FacturaEnc) \
+        .values('producto__nombre_producto') \
+        .annotate(total=Sum('cantidad')).order_by('total')[:5]
+'''
+
+def ProductosMasVendidos(request):
+
+    productos = Producto.objects.all()
+    detalle = FacturaDet.objects.all()
+    return render(request, 'fac/informes_estadisticos/totales.html', {
+        'productos': productos,
+        'detalle': detalle
+    })
+
+class VentasAnuales(generic.TemplateView):
+    template_name = 'fac/informes_estadisticos/ventas_anuales.html'
+
+    def ventas(self):
+        data = []
+        anio = datetime.now().year
+        for mes in range(1, 13):
+            total = FacturaEnc.objects.filter(fecha__year=anio, fecha__month=mes).aggregate(r=Coalesce(Sum('total'), 0)).get('r') 
+            data.append(float(total))
+
+        return data    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['ventas_anuales'] = self.ventas()
+        return context

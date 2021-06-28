@@ -11,14 +11,15 @@
 {% endblock %}
 
 {% block page_content %}
- <div class="x_panel">
-    <div class="x_content">
+ <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <!-- prepare a DOM container with width and height -->
-        <div class="table-responsive">
+        <div class="table-responsive text-center">
+            <h3  class="m-0 font-weight-bold text-primary">Informe de Ventas Diarias</h3>
             <div id="main" style="width: 900px;height:400px;"></div>
               <div  class="table-responsive">
                 <!-- class="invisible" -->
-                <table class="table" id="datos_tbl">
+                <table class="table table-striped table-hover dt-responsive nowrap" style="width:50%">
                 <thead>
                     <tr>
                     <th>Fecha</th>
@@ -27,8 +28,8 @@
                 </thead>
                 <tbody>
                     {% for venta in ventas %}
-                        <th scope="row">{{ venta.fecha }}</th>
-                        <th scope="row">{{ venta.total }}</th>
+                        <th>{{ venta.fecha }}</th>
+                        <th>${{ venta.total }}</th>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -140,5 +141,5 @@
         myChart.setOption(option);
 
                 
-           </script>
+</script>
 {% endblock %}

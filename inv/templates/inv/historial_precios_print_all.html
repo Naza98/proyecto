@@ -63,20 +63,32 @@
                     <tr>
                         <th>Producto</th>
                         <th>Precio Anterior</th>
-                        <th>Precio Actual</th>
                         <th>Última Modificación</th>
-                        <th>Usuario</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in obj %}
                     <tr>
-                        <td>{{ item.nombre_producto }}, {{ item.marca }}</td>
-                        <td>${{ item.precio_anterior }}</td>
+                        <td>{{ item.producto.nombre_producto }}, {{ item.producto.marca }}</td>
                         <td>${{ item.precio }}</td>
-                        <td>{{ item.fm }}</td>
-                        <td>{{ item.uc }}</td>
+                        <td>{{ item.fecha_modificacion }}</td>
                     </tr>
+                    {% endfor %}
+                </tbody>
+            </table> <br> <br>  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio Actual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in productos %}
+                        <tr>
+                            <td> {{p.nombre_producto}}</td>
+                            <td> {{p.precio}}</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>

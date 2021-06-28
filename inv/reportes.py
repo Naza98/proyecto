@@ -6,7 +6,7 @@ from django.template import Context
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.utils import timezone
-from .models import Producto
+from .models import HistorialPreciosVenta, Producto
 
 def link_callback(uri, rel):
     """
@@ -40,11 +40,13 @@ def historial_precios_productos(request):
     template_path = 'inv/historial_precios_print_all.html' #ruta a nuestra plantilla
     today = timezone.now() #fecha actual 
 
-    productos = Producto.objects.filter(fm__isnull=False, um__isnull=False)
+    historial = HistorialPreciosVenta.objects.order_by('fecha_modificacion', 'producto__nombre_producto')
+    productos = Producto.objects.filter(estado=True).order_by('nombre_producto')
     context = {
-        'obj': productos,  #todas las actulizaciones
+        'obj': historial,  #todas las actulizaciones
         'today': today,  #fecha actual
-        'request': request #respuesta
+        'request': request, #respuesta
+        'productos':productos
         }
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf') #objeto de respuesta 
@@ -60,4 +62,5 @@ def historial_precios_productos(request):
     if pisaStatus.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
 

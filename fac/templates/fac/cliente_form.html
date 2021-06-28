@@ -174,30 +174,6 @@
     </div>
 </div>
 
-
-{% if t %}
-<script>
-    $("#frmCliente").submit(function (e) {
-        var frm = $('#frmCliente');
-        $.ajax({
-            type: frm.attr('method'),
-            url: frm.attr('action'),
-            data: frm.serialize(),
-            success: function (data) {
-                // alert(data);
-                window.location.reload(true);
-            },
-            error: function (data) {
-                alert(data);
-            }
-        });
-        return false;
-    });
-</script>
-{% endif %}
-
-{% block js_page %}
-
 <script>
     $(function() {
         $("#id_provincia").val("{{ obj.barrio.localidad.provincia.id }}").change();
@@ -210,4 +186,38 @@
     });
 </script>
 
-{% endblock %}
+
+<script> 
+    $(function() {
+    
+        var url = $("form").attr("action");                             //Inicializar variable para saber si es un nuevo o editar          
+        var token = jQuery("[name=csrfmiddlewaretoken]").val();          //Se toma el token de seguridad
+    
+        $("form").submit(function(e){                               //Capturar el envio del formulario
+            e.preventDefault();                                     //Se lo intercepta
+            // alert(token);
+            var formData = $("form").serializeArray();              //nos devuelve un array con todos los datos del formulario
+            // console.log(formData);
+            $.ajax({
+                url:url,
+                method:"POST",                                      //Envio de formulario
+                headers: {'X-CSRFToken': token },
+                data: formData
+            })
+            .done(function(r,textStatus,xhr){                       //Si se ejecuto bien
+                if(xhr.status=200){                                 //Si el status=200
+                    location.reload(true);                          //Recargar pagina
+                }
+                else{
+                    mensaje(textStatus);                              //Sino, enviar el mensaje de error
+                }
+            }).fail(function (error) {                                 //Si falla algo
+                    mensaje(error.responseText);                        //Se imprime mensaje de error
+            });
+        });
+    });
+    </script>
+
+
+
+

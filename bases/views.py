@@ -1,3 +1,4 @@
+from cmp.models import ComprasEnc
 from inv.models import Producto
 from django.db.models.aggregates import Sum
 from django.shortcuts import render
@@ -36,13 +37,43 @@ class SinPrivilegios(LoginRequiredMixin, PermissionRequiredMixin, MixinFormInval
 #Inicio del sistema
 class Home(LoginRequiredMixin, generic.TemplateView):
     template_name = 'bases/home.html'
-    login_url='bases:login' #Si el usuario no esta regisrado, enviar al login
+    login_url='bases:login' #Si el usuario no esta registrado, enviar al login
+
+    def get_totales_ventas(self):
+        data = []
+        ventas = FacturaEnc.objects.all().aggregate(ventas=Sum('total'))
+        data.append(ventas)
+        return data
+    
+    def get_totales_compras(self):
+        data = []
+        compras = ComprasEnc.objects.all().aggregate(compras=Sum('total'))
+        data.append(compras)
+        return data
+
+    def ProductosMasVendidos(self):
+        data = []
+        produ = FacturaDet.objects.all() \
+        .filter(factura_id__in=FacturaEnc) \
+        .values('producto__nombre_producto') \
+        .annotate(total=Sum('cantidad')).order_by('total')[:5]
+        data.append(produ)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['totales_ventas'] = self.get_totales_ventas()
+        context['totales_compras'] = self.get_totales_compras()
+        context['produ_mas_vendidos'] = self.ProductosMasVendidos
+        return context
 
 
 
 class HomeSinPrivilegios(LoginRequiredMixin, generic.TemplateView):
     login_url = "bases:login"
     template_name="bases/sin_privilegios.html"
+
+
+
 
 
 
@@ -57,3 +88,4 @@ def total_ventas(request):
     contexto = {'ventas':ventas}
     template_name = 'bases/home.html'
     return render(request,template_name,contexto)  
+

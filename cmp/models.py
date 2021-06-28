@@ -9,10 +9,10 @@ from bases.models import ClaseModelo
 from inv.models import Producto
 
 class Proveedor(ClaseModelo):
-    descripcion=models.CharField(max_length=100, unique=True)
+    descripcion=models.CharField(max_length=100, null=False, blank=False, unique=True)
     contacto=models.CharField(max_length=100)
-    telefono=models.CharField(max_length=10,null=True, blank=True, unique=True)
-    email=models.EmailField(max_length=250,null=True, blank=True, unique=True)
+    telefono=models.PositiveIntegerField(null=False, blank=False, unique=True)
+    email=models.EmailField(max_length=250,null=False, blank=False, unique=True)
     barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE)
 
     calle = models.CharField(max_length=300, blank=True, null=True)

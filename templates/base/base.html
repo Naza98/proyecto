@@ -155,7 +155,7 @@
       </li>
 
       <!--Presupuestos-->
-      <li class="nav-item">
+     <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePresupuestos"
           aria-expanded="true" aria-controls="collapsePresupuestos">
           <i class="fas fa-receipt"></i>
@@ -167,7 +167,7 @@
             <a class="collapse-item" href="#">Presupuestos</a>
           </div>
         </div>
-      </li>
+      </li>-->
 
       <!--Reportes e informes-->
       {% if request.user.is_staff %}
@@ -180,9 +180,8 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="#"> Productos más vendidos</a>
-            <a class="collapse-item" href="{% url 'fac:ventas_informe' %}"> Informe de ventas</a>
-            <a class="collapse-item" href="#"> Actualización de precios</a>
-            <a class="collapse-item" href="{% url 'fac:total' %}"> Totales: Compras-Ventas</a>
+            <a class="collapse-item" href="{% url 'fac:ventas_informe' %}"> Ventas Diarias</a>
+            <a class="collapse-item" href="{% url 'fac:ventas_anuales' %}"> Venta Anual</a>
           </div>
         </div>
       </li>
@@ -444,6 +443,10 @@
                   Activity Log
                 </a>
                 <div class="dropdown-divider"></div>-->
+               <!-- <a class="dropdown-item" href="/CambiarContrasenia/" data-toggle="modal" data-target="#">
+                  <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Cambiar Contraseña
+                </a>-->
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Salir
@@ -522,8 +525,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
 
         <script src="{% static  'base/js/jquery.chained.min.js' %}"></script>
-        <!--Charts.js-->
-        <script src="{% static 'base/charts.js/charts.js' %} "></script>
+
+
 
         <script>
           $(document).ready(function () {

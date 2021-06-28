@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-
+{% load static %}
 
 {% block page_content %}
 
@@ -18,7 +18,7 @@
 		<div class="card card-body text-center">
 			<h5>Total de Ventas</h5>
 			<hr>			
-			<h1 style="text-align: center;padding: 10px"> {% for v in ventas %} {{ v.total_ventas }} {% endfor %}</h1>
+			<h1 style="text-align: center;padding: 10px">{{ ventas.total }}</h1>
 		</div>
 	</div>
 
@@ -26,9 +26,62 @@
 		<div class="card card-body text-center">
 			<h5>Total de compras</h5>
 			<hr>
-			<h1 style="text-align: center;padding: 10px"> {% for c in compras %} {{ c.total_compras }} {% endfor %}</h1>
+			<h1 style="text-align: center;padding: 10px"> {{ compras.total }}</h1>
 		</div>
 	</div>
+</div><br>
+<h4 class="m-0 font-weight-bold text-primary text-center">Totales</h4>
+<div id="container" style="width: 40%; height: 40%;">
+	<canvas id="myChart1" max-width="700px"></canvas>
 </div>
 
-{% endblock  %}
+{% endblock  %} 
+
+{% block js_page %}
+<script>
+    var nombres = [];
+    var cantidad = [];
+
+    {% for producto in productos %}
+        nombres.push('{{producto.nombre_producto}}') 
+    {% endfor %}
+
+    var ctx = document.getElementById('myChart1').getContext('2d');
+    var myChart1 = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: nombres,
+    datasets: [{
+        label: 'Number of Products',
+        data: [{% for producto in productos %} {{ producto.existencia }}, {% endfor %}],
+        backgroundColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+                borderWidth: 1
+    }]
+        },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+    });
+</script>
+{% endblock %}
