@@ -1,3 +1,5 @@
+from django.db.models.aggregates import Count
+from django.http.response import JsonResponse
 from domicilios.models import Provincia, Localidad, Barrio
 from django.shortcuts import render,redirect
 from django.views import generic
@@ -315,18 +317,7 @@ def ProductosMasVendidos(request):
         'detalle': detalle
     })
 
-class VentasAnuales(generic.TemplateView):
-    template_name = 'fac/informes_estadisticos/ventas_anuales.html'
 
-    def ventas(self):
-        data = []
-        anio = datetime.now().year
-        for mes in range(1, 13):
-            total = FacturaEnc.objects.filter(fecha__year=anio, fecha__month=mes).aggregate(r=Coalesce(Sum('total'), 0)).get('r') 
-            data.append(float(total))
 
-        return data    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ventas_anuales'] = self.ventas()
-        return context
+#  ProductosVendidos = FacturaDet.objects.annotate(producto=FacturaDet('producto')).values(count=Count('cantidad'))
+#print(ProductosVendidos)

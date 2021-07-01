@@ -32,16 +32,10 @@
 </div><br>
 
 
-    <div class="col-md-10">
+    <div class="col-md-10" >
         <h4 class="m-0 font-weight-bold text-secondary">Productos más vendidos</h4>
         <div id="container" style="width: 30%; height: 30%;">
             <canvas id="myChart" width="400" height="400"></canvas>
-        </div>
-
-        <div>
-            <h4 class="m-0 font-weight-bold text-secondary">Productos más vendidos</h4>
-        <div id="container" style="width: 30%; height: 30%;">
-            <canvas id="grafico" width="400" height="400"></canvas>
         </div>
     </div>
 
@@ -51,6 +45,7 @@
 
 {% block js_page %}
 
+<script src="{% static 'charts/charts.min.js' %}"></script>
 <script>
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
@@ -86,8 +81,7 @@ var myChart = new Chart(ctx, {
             }
         }
     }
-});
-</script>
+});</script>
 {% endblock  %}
     
 

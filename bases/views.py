@@ -43,13 +43,13 @@ class Home(LoginRequiredMixin, generic.TemplateView):
         data = []
         ventas = FacturaEnc.objects.all().aggregate(ventas=Sum('total'))
         data.append(ventas)
-        return data
+        return ventas["ventas"]
     
     def get_totales_compras(self):
         data = []
         compras = ComprasEnc.objects.all().aggregate(compras=Sum('total'))
         data.append(compras)
-        return data
+        return compras["compras"]
 
     def ProductosMasVendidos(self):
         data = []
@@ -89,3 +89,13 @@ def total_ventas(request):
     template_name = 'bases/home.html'
     return render(request,template_name,contexto)  
 
+
+'''
+    #Obtener los primeros 5 productos
+    #productos = Producto.objects.annotate(num_prod=Count('facdet')).order_by('-num_prod')[:5]
+    #productos[0].num_prod
+
+    #Enlace de referncia
+    #https://docs.djangoproject.com/en/3.2/topics/db/aggregation/
+from django.db.models import Count
+'''

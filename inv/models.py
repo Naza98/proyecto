@@ -147,6 +147,14 @@ class TipoMovimiento(ClaseModelo):
         db_table = 'Tipo de movimientos'
 
 
+class Motivo(ClaseModelo):
+
+    descripcion = models.CharField(max_length=300, null=False, blank=False)
+
+    class Meta:
+        verbose_name = 'Motivo'
+        verbose_name_plural = 'Motivos'
+        db_table = 'Motivos'
 
 
 class Movimiento(ClaseModelo):
@@ -156,7 +164,7 @@ class Movimiento(ClaseModelo):
     fecha = models.DateField(null=True, blank=True)
     cantidad = models.IntegerField(null=True, blank=True)
     #En caso de que sea una devolucion, se debe especificar el motivo.
-    motivo = models.CharField(max_length=200, null=True, blank=True) 
+    motivo = models.ForeignKey(Motivo, null=True, blank=True, on_delete=models.CASCADE)
 
     def save(self):
         self.motivo = self.motivo.upper()
