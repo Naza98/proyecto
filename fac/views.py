@@ -83,7 +83,7 @@ class ClienteEdit(SuccessMessageMixin,SinPrivilegios, \
 
 
 @login_required(login_url="/login/")
-@permission_required("fac.change_cliente",login_url="/login/")
+@permission_required("fac.change_cliente",login_url="bases:sin_privilegios")
 def clienteInactivar(request,id):
     cliente = Cliente.objects.filter(pk=id).first()
     contexto = {}
@@ -110,21 +110,6 @@ class FacturaView(SinPrivilegios, generic.ListView):
     context_object_name = "obj"
     permission_required="fac.view_facturaenc"
 
-    def get_queryset(self):
-        user = self.request.user
-        # print(user,"usuario")
-        qs = super().get_queryset()
-        for q in qs:
-            print(q.uc,q.id)
-        
-        if not user.is_superuser:
-            qs = qs.filter(uc=user)
-
-        for q in qs:
-            print(q.uc,q.id)
-
-        return qs
-
 
 @login_required(login_url='/login/')
 @permission_required('fac.change_facturaenc', login_url='bases:sin_privilegios')
@@ -132,7 +117,7 @@ def facturas(request,id=None):
     template_name='fac/facturas.html'
 
     detalle = {}
-    clientes = Cliente.objects.filter(estado=True)
+    clientes = Cliente.objects.filter(estado=True).order_by('apellidos')
     forma_pago = FormaPago.objects.all()
     tipo_factura = TipoFactura.objects.all()
     
@@ -292,32 +277,12 @@ def CmpFac(request):
     }
     return render(request, template_name, context)
 
-
 '''
-def ProductosMasVendidos(request):
-    produ = FacturaDet.objects.all() \
-        .filter(factura_id__in=FacturaEnc) \
-        .values('producto__nombre_producto') \
-        .annotate(total=Sum('cantidad')).order_by('total')
+anio = datetime.now().year
+for m in range(1,13):
+    ventasanuales = FacturaEnc.objects.filter(fecha__year=anio, fecha__month=m).aggregate(Sum('total'))
+    print(ventasanuales)
+'''
+
+
     
-    context = { "ProductosMasVendidos": produ }
-    return render(request, context)
-
-    .filter(factura_id__in=FacturaEnc) \
-        .values('producto__nombre_producto') \
-        .annotate(total=Sum('cantidad')).order_by('total')[:5]
-'''
-
-def ProductosMasVendidos(request):
-
-    productos = Producto.objects.all()
-    detalle = FacturaDet.objects.all()
-    return render(request, 'fac/informes_estadisticos/totales.html', {
-        'productos': productos,
-        'detalle': detalle
-    })
-
-
-
-#  ProductosVendidos = FacturaDet.objects.annotate(producto=FacturaDet('producto')).values(count=Count('cantidad'))
-#print(ProductosVendidos)

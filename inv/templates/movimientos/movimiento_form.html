@@ -61,8 +61,15 @@
                             </div>
 
                             <div class="col-md-6">
-                                <div class="col-md-6">{{form.motivo.label}}</div>
-                                <div class="col-md-6">{{form.motivo}}</div>
+                                <div class="col-md-6">Motivo</div>
+                                <div class="col-md-6">
+                                    <select name="motivo" id="id_motivo" class="form-control from-control-sm">
+                                        <option value="0">-------</option>
+                                        {% for item in motivos %}
+                                        <option value="{{item.id}}">{{item.descripcion}}</option>
+                                        {% endfor%}
+                                    </select>
+                                </div>
                             </div>
                                                     
                         </div>
@@ -91,5 +98,6 @@
     $(function() {
         $("#id_producto").val("{{ obj.producto.id }}").change();
         $("#id_tipo_movimiento").val("{{ obj.tipo_movimiento.id }}").change();
+        $("#id_motivo").val("{{ obj.motivo.id }}").change();
     });
 </script>

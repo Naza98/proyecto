@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from bases.views import Home, HomeSinPrivilegios
+from bases.views import Home, HomeSinPrivilegios, CantidadProductosVendidos, ProductosPorCategoria, ProductosMenosVendidos
 
 
 from .views import *
@@ -12,5 +12,8 @@ urlpatterns = [
     path('login/',auth_views.LoginView.as_view(template_name='bases/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='bases/login.html'), name='logout'),
 
-    path('sin_privilegios/', HomeSinPrivilegios.as_view(), name='sin_privilegios')
+    path('sin_privilegios/', HomeSinPrivilegios.as_view(), name='sin_privilegios'),
+    path('CantidadProductosVendidos/', CantidadProductosVendidos, name='CantidadProductosVendidos'),
+    path('ProductosPorCategoria/', ProductosPorCategoria, name='ProductosPorCategoria'),
+    path('ProductosMenosVendidos/', ProductosMenosVendidos, name='ProductosMenosVendidos'),
 ]

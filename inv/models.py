@@ -132,6 +132,9 @@ class HistorialPreciosVenta(models.Model):
 
         verbose_name = 'Historial de Precios de Venta'
         verbose_name_plural = 'Historiales de Precios de Ventas'
+        permissions = [
+            ('historial_precios_venta','Historial de precios de venta')
+        ]
 
 #--------------------PARA LOS AJUSTES DE INVENTARIO Y DEVOLUCIONES--------------------------#
 
@@ -165,10 +168,6 @@ class Movimiento(ClaseModelo):
     cantidad = models.IntegerField(null=True, blank=True)
     #En caso de que sea una devolucion, se debe especificar el motivo.
     motivo = models.ForeignKey(Motivo, null=True, blank=True, on_delete=models.CASCADE)
-
-    def save(self):
-        self.motivo = self.motivo.upper()
-        super(Movimiento, self).save()
 
     class Meta:
         verbose_name = 'Movimientos'

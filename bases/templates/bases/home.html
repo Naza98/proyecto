@@ -3,85 +3,103 @@
 
 {% block page_content %}
 
-<div class="row">
-	<div class="col-md">
-		<div class="card card-body">
-			<h5>Realizar:</h5>
-			<hr>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'cmp:compras_new' %}">Nueva Compra</a>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'fac:factura_new' %}">Nueva Venta</a>
 
-		</div>
-	</div>
+    
 
-	<div class="col-md">
-		<div class="card card-body text-center">
-			<h5>Total de Ventas</h5>
-			<hr>			
-			<h1 style="text-align: center;padding: 10px">{{ totales_ventas }}</h1>
-		</div>
-	</div>
+<div class="row col-auto" >
 
-	<div class="col-md">
-		<div class="card card-body text-center">
-			<h5>Total de compras</h5>
-			<hr>
-			<h1 style="text-align: center;padding: 10px"> {{ totales_compras }}</h1>
-		</div>
-	</div>
-</div><br>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Realizar</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'cmp:compras_new' %}">Nueva Compra</a>
+                            <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'fac:factura_new' %}">Nueva Venta</a>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-plus fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
 
-
-    <div class="col-md-10" >
-        <h4 class="m-0 font-weight-bold text-secondary">Productos más vendidos</h4>
-        <div id="container" style="width: 30%; height: 30%;">
-            <canvas id="myChart" width="400" height="400"></canvas>
+    <!-- Total de ventas -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total de Ventas</div>
+                        <div class="h1 mb-0 font-weight-bold text-gray-800">${{ totales_ventas }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Total de compras -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total de Compras</div>
+                        <div class="h1 mb-0 font-weight-bold text-gray-800">${{ totales_compras }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div><br></div>
+
+<div class="row">
+    <!--Gráfico de productos mas vendidos-->
+    <div class="col-md-6">
+        <h4 class="m-0 font-weight-bold text-primary">Top 5 Productos más vendidos</h4>
+        <div id="container" style="width: 80%; height: 80%;">
+            <canvas id="myChart" width="400px" height="400px"></canvas>
+        </div>
+    </div>
+
+    <!--Gráfico de productos menos vendidos-->
+    <div class="col-md-6">
+        <h4 class="m-0 font-weight-bold text-primary"> Top 5 Productos menos vendidos</h4>
+        <div id="container" style="width: 80%; height: 80%;">
+            <canvas id="grafico" width="400" height="400"></canvas>
+        </div>
+    </div> <br><br>
+
+    <div class="col-md-6">
+        <h4 class="m-0 font-weight-bold text-primary"> Productos mas vendidos por Subcategoría</h4>
+        <div id="container" style="width: 80%; height: 80%;">
+            <canvas id="grafico2" width="400" height="400"></canvas>
+        </div>
+    </div>
+</div>
 
 {% endblock  %}
 
 
 {% block js_page %}
-
 <script src="{% static 'charts/charts.min.js' %}"></script>
-<script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});</script>
-{% endblock  %}
-    
+<script src="{% static 'graficos/productos_menos_vendidos.js' %}"></script>
+<script src="{% static 'graficos/productos_mas_vendidos.js' %}"></script>
+<script src="{% static 'graficos/productos_mas_vendidos_subcategorias.js' %}"></script>
 
+{% endblock %}

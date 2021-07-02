@@ -1,5 +1,5 @@
 from cmp.models import ComprasEnc
-from inv.models import Producto
+from inv.models import Categoria, Producto, SubCategoria
 from django.db.models.aggregates import Sum
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -11,6 +11,7 @@ from django.views import generic
 from datetime import datetime
 from fac.models import FacturaEnc, FacturaDet
 from inv.models import Producto
+from django.db.models import Count
 
 
 
@@ -90,12 +91,60 @@ def total_ventas(request):
     return render(request,template_name,contexto)  
 
 
-'''
-    #Obtener los primeros 5 productos
-    #productos = Producto.objects.annotate(num_prod=Count('facdet')).order_by('-num_prod')[:5]
-    #productos[0].num_prod
 
-    #Enlace de referncia
-    #https://docs.djangoproject.com/en/3.2/topics/db/aggregation/
-from django.db.models import Count
-'''
+# Los 5 productos mas vendidos 
+def CantidadProductosVendidos(request):
+    qs = Producto.objects.annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')[:5]
+    import json
+    data ={}                                                            
+    c = 0                                                              
+    for p in qs:                                                      
+        obj = {                                                        
+            c: {                                                       
+                "label":p.nombre_producto,
+                "cantidad":p.num_prod
+            } 
+        }
+        data.update(obj)                                                
+        c = c + 1 
+    return JsonResponse(data)
+
+# Los 5 Productos menos vendidos
+def ProductosMenosVendidos(request):
+    qs = Producto.objects.annotate(num_prod=Sum('facturadet__cantidad')).order_by('num_prod')[:5]
+    import json
+    data ={}                                                            
+    c = 0                                                            
+    for p in qs:                                                       
+        obj = {                                                        
+            c: {                                                        
+                "productos":p.nombre_producto,
+                "numeros":p.num_prod
+            } 
+        }
+        data.update(obj)                                                
+        c = c + 1 
+    return JsonResponse(data)
+
+# Productos mas vendidos por 
+def ProductosPorCategoria(request):
+    qs = Producto.objects.values('subcategoria').annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')
+    import json
+    data ={}                                                            
+    c = 0                                                            
+    for p in qs:                                                       
+        obj = {                                                        
+            c: {                                                        
+                "label":p.subcategoria,
+                "data":p.num_prod
+            } 
+        }
+        data.update(obj)                                                
+        c = c + 1 
+    return JsonResponse(data)
+
+
+#cantidad = Producto.objects.values('subcategoria').annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')
+#print(cantidad)
+
+

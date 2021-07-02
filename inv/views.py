@@ -1,5 +1,6 @@
 from django.db.models import query
-from django.http.response import HttpResponseRedirect
+from django.db.models.aggregates import Sum
+from django.http.response import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.views import generic
 from django.urls import reverse_lazy
@@ -11,7 +12,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 
 from .models import Categoria,SubCategoria, Marca, \
-    Producto, TipoMovimiento, Movimiento, HistorialPreciosVenta
+    Producto, TipoMovimiento, Motivo, Movimiento, HistorialPreciosVenta
 from .forms import ActualizacionPrecioForm, CategoriaForm, SubCategoriaForm, MarcaForm, \
     ProductoForm, MovimientoForm
 
@@ -21,7 +22,7 @@ from bases.views import SinPrivilegios
 class CategoriaView(SinPrivilegios, generic.ListView):
     permission_required = "inv.view_categoria" #permiso para acceder al la lista 
     model = Categoria
-    queryset = Categoria.objects.filter(estado=True)
+    queryset = Categoria.objects.filter(estado=True).order_by('descripcion')
     obj = queryset
     template_name = "inv/categoria_list.html"
     context_object_name = "obj"
@@ -60,7 +61,7 @@ class CategoriaEdit(SuccessMessageMixin,SinPrivilegios, \
 
 
 @login_required(login_url="/login/")
-@permission_required("inv.change_categoria",login_url="/login/")
+@permission_required("inv.change_categoria",login_url="bases:sin_privilegios")
 def categoria_inactivar(request, id):
     prod = Categoria.objects.filter(pk=id).first()
     contexto={}
@@ -95,7 +96,7 @@ class SubCategoriaView(SinPrivilegios, \
     generic.ListView):
     permission_required = "inv.view_subcategoria"
     model = SubCategoria
-    queryset = SubCategoria.objects.filter(estado=True)
+    queryset = SubCategoria.objects.filter(estado=True).order_by('descripcion')
     obj = queryset
     template_name = "inv/subcategoria_list.html"
     context_object_name = "obj"
@@ -130,7 +131,7 @@ class SubCategoriaEdit(SuccessMessageMixin,SinPrivilegios, generic.UpdateView):
 
 
 @login_required(login_url="/login/")
-@permission_required("inv.change_subcategoria",login_url="/login/")
+@permission_required("inv.change_subcategoria",login_url="bases:sin_privilegios")
 def subcategoria_inactivar(request, id):
     prod = SubCategoria.objects.filter(pk=id).first()
     contexto={}
@@ -164,7 +165,7 @@ class MarcaView(SinPrivilegios,\
      generic.ListView):
     permission_required = "inv.view_marca"
     model = Marca
-    queryset = Marca.objects.filter(estado=True)
+    queryset = Marca.objects.filter(estado=True).order_by('descripcion')
     obj = queryset
     template_name = "inv/marca_list.html"
     context_object_name = "obj"
@@ -285,7 +286,7 @@ def um_inactivar(request, id):
 class ProductoView(SinPrivilegios, generic.ListView):
     model = Producto
     template_name = "inv/producto_list.html"
-    queryset = Producto.objects.filter(estado=True)
+    queryset = Producto.objects.filter(estado=True).order_by('nombre_producto')
     obj = queryset
     context_object_name = "obj"
     permission_required="inv.view_producto"
@@ -347,11 +348,11 @@ class ProductoEdit(SuccessMessageMixin,SinPrivilegios,
 
 
 @login_required(login_url="/login/")
-@permission_required("inv.change_producto",login_url="/login/")
+@permission_required("inv.change_producto",login_url="bases:sin_privilegios")
 def producto_inactivar(request, id):
     prod = Producto.objects.filter(pk=id).first()
     contexto={}
-    template_name="inv/catalogos_del.html"
+    template_name="inv/producto_del.html"
 
     if not prod:
         return redirect("inv:producto_list")
@@ -376,7 +377,7 @@ class HistorialPreciosProductos(SinPrivilegios,\
     queryset = HistorialPreciosVenta.objects.all().order_by('fecha_modificacion', 'producto__nombre_producto')
     obj = queryset
     context_object_name = "obj"
-    permission_required="inv.view_historial_precios_venta"
+    permission_required="inv.historial_precios_venta"
 
     def get_context_data(self, **kwargs):
         context = super(HistorialPreciosProductos, self).get_context_data(**kwargs)
@@ -409,8 +410,9 @@ class MovimientoNew(SuccessMessageMixin,SinPrivilegios,
     
     def get_context_data(self, **kwargs):
         context = super(MovimientoNew, self).get_context_data(**kwargs)
-        context["productos"] = Producto.objects.all()
+        context["productos"] = Producto.objects.filter(estado=True).order_by('nombre_producto')
         context["tipo_movimiento"] = TipoMovimiento.objects.all()
+        context["motivos"] = Motivo.objects.all()
         return context
 
 
@@ -436,6 +438,7 @@ class MovimientoEdit(SuccessMessageMixin,SinPrivilegios,
         context = super(MovimientoEdit, self).get_context_data(**kwargs)
         context["productos"] = Producto.objects.all()
         context["tipo_movimiento"] = TipoMovimiento.objects.all()
+        context["motivos"] = Motivo.objects.all()
         context["obj"] = Movimiento.objects.filter(pk=pk).first()
         return context
 
@@ -504,3 +507,20 @@ class ActualizarPrecioTemplateView(generic.TemplateView):
             return render(self.request,
                           'inv/producto_actualizar_precios.html',
                           {'form': form_producto_actualizar})
+
+
+def ProductosMenosVendidos(request):
+    qs = Producto.objects.annotate(num_prod=Sum('facturadet__cantidad')).order_by('num_prod')[:5]
+    import json
+    data ={}                                                            
+    c = 0                                                            
+    for p in qs:                                                       
+        obj = {                                                        
+            c: {                                                        
+                "label":p.nombre_producto,
+                "data":p.num_prod
+            } 
+        }
+        data.update(obj)                                                
+        c = c + 1 
+    return JsonResponse(data)

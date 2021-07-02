@@ -19,6 +19,7 @@ class Provincia(models.Model):
         db_table = 'Provincias'
         verbose_name = 'Provincia'
         verbose_name_plural = 'Provincias'
+        
 
 
 
@@ -38,6 +39,7 @@ class Localidad(models.Model):
         verbose_name_plural = 'Localidades'
 
 
+
 class Barrio(models.Model):
 
     localidad = models.ForeignKey(Localidad, null=False, blank=False,
@@ -52,22 +54,3 @@ class Barrio(models.Model):
         db_table = 'Barrios'
         verbose_name = 'Barrio'
         verbose_name_plural = 'Barrios'
-
-#class Domicilio(models.Model):
-
-#    barrio = models.ForeignKey(Barrio, null=True, blank=True, on_delete=models.CASCADE)
-#    calle = models.CharField(max_length=300, blank=True, null=True)
-#    altura = models.CharField(max_length=300, blank=True, null=True)
-#    manzana = models.CharField(max_length=300, blank=True, null=True)
-#    departamento = models.CharField(max_length=300, blank=True, null=True)
-#    piso = models.CharField(max_length=300, blank=True, null=True)
-#    observacion = models.CharField(max_length=600, blank=True, null=True)
-    # Agregar casa
-    # para realizar bajas logicas
-#    baja = models.BooleanField(default=False)
-#    fecha = models.DateField(blank=True, null=True)
-
-#    class Meta:
-#       db_table = 'Domicilios'    
-
-'''---------------------- Domicilios ---------------------- '''

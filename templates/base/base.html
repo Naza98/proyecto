@@ -179,9 +179,9 @@
         </a>
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#"> Productos más vendidos</a>
-            <a class="collapse-item" href="{% url 'fac:ventas_informe' %}"> Ventas Diarias</a>
-            <a class="collapse-item" href="#"> Venta Anual</a>
+            <a href="{% url 'inv:historial_precios' %}" class="collapse-item">Historial de precios</a>
+            <a class="collapse-item" href="{% url 'fac:total' %}"> Gráfico compras-ventas</a>
+            <a class="collapse-item" href="{% url 'fac:ventas_informe' %}"> Gráfico de ventas diarias</a>
           </div>
         </div>
       </li>
@@ -201,6 +201,23 @@
         </div>
       </li>
       {% endif %}
+
+      <!--Modulo de carga extras-->
+      <!--<li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCarga" aria-expanded="true"
+          aria-controls="collapseCarga">
+          <i class="fas fa-calendar-plus"></i>
+          <span>Carga de datos</span>
+        </a>
+        <div id="collapseCarga" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Localizaciones</h6>
+            <a class="collapse-item" href="#">Provincias</a>
+            <a class="collapse-item" href="#">Localidades</a>
+            <a class="collapse-item" href="#">Barrios</a>
+          </div>
+        </div>  
+      </li>-->
       <!--<li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="fas fa-fw fa-wrench"></i>

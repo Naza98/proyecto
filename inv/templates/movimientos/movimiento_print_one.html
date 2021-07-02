@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Movimiento</title>
+
+    <style type="text/css">
+    @page {
+        size: letter;
+        margin: 1cm;
+    }
+
+    .table td .numero{
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h4>Sistema BR-SCF</h4>
+            </div>
+
+            <div class="list-group">
+                <p>No. de Movimiento: {{ movimiento.id}} </p>
+                <hr>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Tipo de Movimiento</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in detalle %}
+                    <tr>
+                        <td><span class="small">{{ item.producto.nombre_producto }}</span></td>
+                        <td class="small">{{ item.tipo_movimiento.descripcion }}</td>
+                        <td class="numero">{{ item.cantidad }}</td>
+                        <td>{{ item.fecha|date:"d/m/Y"}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

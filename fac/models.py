@@ -54,6 +54,7 @@ class Cliente(ClaseModelo):
 
     calle = models.CharField(max_length=300, blank=False, null=False)
     altura = models.CharField(max_length=300, blank=False, null=False)
+    casa = models.PositiveIntegerField(blank=True, null=True)
     manzana = models.CharField(max_length=300, blank=True, null=True)
     departamento = models.CharField(max_length=300, blank=True, null=True)
     piso = models.CharField(max_length=300, blank=True, null=True)

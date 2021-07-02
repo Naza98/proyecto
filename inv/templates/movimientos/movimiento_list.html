@@ -19,6 +19,7 @@
   <div class="card-body">
     <div class="buttons-toolbar">
       <a class="btn btn-success" onclick="return abrir_modal('{% url 'inv:movimiento_new' %}')" href=""><i class="fa fa-plus"></i> Nuevo Movimiento </a>
+      <a class="btn btn-primary" href="{% url 'inv:imprimir_movimientos' %}"><i class="fa fa-print"></i> Imprimir Reporte de Movimientos</a>
     </div>
     {% if not obj %}
     <div class="alert alert-info">No se encontraron resultados</div>
@@ -47,13 +48,13 @@
         <tr>
           <td>{{ item.producto.nombre_producto }}, {{ item.producto.marca }}</td>
           <td>{{ item.tipo_movimiento.descripcion }}</td>
-          <td>{{ item.motivo }}</td>
+          <td>{{ item.motivo.descripcion }}</td>
           <td>{{ item.fecha }}</td>
           <td>{{ item.cantidad }}</td>
           <td>
             <button class="btn btn-warning btn-circle" onclick="return abrir_modal('{% url 'inv:movimiento_edit' item.id %}')">
                 <i class="far fa-edit"></i></button>
-                <a href="#" class="btn btn-danger btn-circle" role="button"><i class="far fa-trash-alt"></i></a>
+                <a class="btn btn-primary btn-circle" href="{% url 'inv:movimiento_print_one' item.id %}" target="reportes"><i class="fas fa-print"></i></a>
           </td>
         </tr>
         {% endfor %}

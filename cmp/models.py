@@ -16,6 +16,7 @@ class Proveedor(ClaseModelo):
     barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE)
 
     calle = models.CharField(max_length=300, blank=True, null=True)
+    casa = models.PositiveIntegerField(blank=True, null=True)
     altura = models.CharField(max_length=300, blank=True, null=True)
     manzana = models.CharField(max_length=300, blank=True, null=True)
     departamento = models.CharField(max_length=300, blank=True, null=True)

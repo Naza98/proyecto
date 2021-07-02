@@ -8,7 +8,7 @@ from .views import ActualizarPrecioTemplateView, CategoriaView, CategoriaNew, Ca
     HistorialPreciosProductos, MovimientoView, MovimientoNew, MovimientoEdit
     
 
-from .reportes import historial_precios_productos    
+from .reportes import historial_precios_productos, imprimir_movimientos, movimiento_unico  
 
 urlpatterns = [
     path('categorias/',CategoriaView.as_view(), name='categoria_list'),
@@ -42,6 +42,8 @@ urlpatterns = [
     path('movimientos/',MovimientoView.as_view(), name="movimiento_list"),
     path('movimientos/new',MovimientoNew.as_view(), name="movimiento_new"),
     path('movimientos/edit/<int:pk>',MovimientoEdit.as_view(), name="movimiento_edit"),
+    path('movimientos/imprimir_movimientos', imprimir_movimientos, name='imprimir_movimientos'),
+    path('movimientos/<int:movimiento_id>/imprimir', movimiento_unico, name='movimiento_print_one'),
     
     #path('um/',UMView.as_view(), name="um_list"),
     #path('um/new',UMNew.as_view(), name="um_new"),

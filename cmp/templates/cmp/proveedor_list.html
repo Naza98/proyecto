@@ -48,7 +48,7 @@
         <tr>
           <td>{{ item.id }}</td>
           <td>{{ item.descripcion }}</td>
-          <td>{{item.barrio.nombre_barrio}}, {{item.calle}} {{item.altura}}</td>
+          <td>{{item.barrio.localidad.provincia}} - {{item.barrio.localidad}} - {{item.barrio.nombre_barrio}} - {{item.calle}} - {{item.altura}}</td>
           <td>{{ item.telefono }}</td>
           <td>{{ item.email }}</td>
           <!--<td>{{item.estado|yesno:"Activo,Inactivo"}}</td>-->

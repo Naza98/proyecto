@@ -3,85 +3,56 @@
 
 {% block page_content %}
 
-<div class="row">
-	<div class="col-md">
-		<div class="card card-body">
-			<h5>Realizar:</h5>
-			<hr>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'cmp:compras_new' %}">Nueva Compra</a>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="{% url 'fac:factura_new' %}">Nueva Venta</a>
-
-		</div>
-	</div>
-
-	<div class="col-md">
-		<div class="card card-body text-center">
-			<h5>Total de Ventas</h5>
-			<hr>			
-			<h1 style="text-align: center;padding: 10px">{{ ventas.total }}</h1>
-		</div>
-	</div>
-
-	<div class="col-md">
-		<div class="card card-body text-center">
-			<h5>Total de compras</h5>
-			<hr>
-			<h1 style="text-align: center;padding: 10px"> {{ compras.total }}</h1>
-		</div>
-	</div>
-</div><br>
-<h4 class="m-0 font-weight-bold text-primary text-center">Totales</h4>
-<div id="container" style="width: 40%; height: 40%;">
-	<canvas id="myChart1" max-width="700px"></canvas>
-</div>
+<h4 class="m-0 font-weight-bold text-primary text-center">Gráfico de compras y ventas</h4>
+<div id="container" style="width: 90%; height: 90%;">
+	<canvas id="grafica" max-width="700px"></canvas>
 
 {% endblock  %} 
 
 {% block js_page %}
-<script>
-    var nombres = [];
-    var cantidad = [];
+<script src="{% static 'charts/charts.min.js' %}"></script>
+<script>     
 
-    {% for producto in productos %}
-        nombres.push('{{producto.nombre_producto}}') 
-    {% endfor %}
 
-    var ctx = document.getElementById('myChart1').getContext('2d');
-    var myChart1 = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: nombres,
-    datasets: [{
-        label: 'Number of Products',
-        data: [{% for producto in productos %} {{ producto.existencia }}, {% endfor %}],
-        backgroundColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
-        ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-                borderWidth: 1
-    }]
-        },
+    // Obtener una referencia al elemento canvas del DOM
+const $grafica = document.querySelector("#grafica");
+// Las etiquetas son las que van en el eje X. 
+const etiquetas = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+// Podemos tener varios conjuntos de datos
+const datosVentas2020 = {
+    label: "Ventas por mes - 2020",
+    data: [5000, 1500, 8000, 5102], // La data es un arreglo que debe tener la misma cantidad de valores que la cantidad de etiquetas
+    backgroundColor: 'rgba(54, 162, 235, 0.2)', // Color de fondo
+    borderColor: 'rgba(54, 162, 235, 1)', // Color del borde
+    borderWidth: 1,// Ancho del borde
+};
+const datosVentas2021 = {
+    label: "Ventas por mes - 2021",
+    data: [10000, 1700, 5000, 5989], // La data es un arreglo que debe tener la misma cantidad de valores que la cantidad de etiquetas
+    backgroundColor: 'rgba(255, 159, 64, 0.2)',// Color de fondo
+    borderColor: 'rgba(255, 159, 64, 1)',// Color del borde
+    borderWidth: 1,// Ancho del borde
+};
+
+new Chart($grafica, {
+    type: 'bar',// Tipo de gráfica
+    data: {
+        labels: etiquetas,
+        datasets: [
+            datosVentas2020,
+            datosVentas2021,
+            // Aquí más datos...
+        ]
+    },
     options: {
         scales: {
             yAxes: [{
                 ticks: {
                     beginAtZero: true
                 }
-            }]
-        }
+            }],
+        },
     }
-    });
+});
 </script>
 {% endblock %}

@@ -17,12 +17,13 @@ from cmp.forms import ProveedorForm,ComprasEncForm
 from bases.views import SinPrivilegios
 from inv.models import Producto
 from domicilios.models import Provincia, Localidad, Barrio
+from fac.models import TipoFactura, FormaPago
 
 
 class ProveedorView(SinPrivilegios, generic.ListView):
     model = Proveedor
     template_name = "cmp/proveedor_list.html"
-    queryset = Proveedor.objects.filter(estado=True)
+    queryset = Proveedor.objects.filter(estado=True).order_by('descripcion')
     obj = queryset
     context_object_name = "obj"
     permission_required="cmp.view_proveedor"
@@ -109,7 +110,9 @@ class ComprasView(SinPrivilegios, generic.ListView):
 @permission_required('cmp.view_comprasenc', login_url='bases:sin_privilegios')
 def compras(request,compra_id=None):
     template_name="cmp/compras.html"
-    prod=Producto.objects.filter(estado=True) #filtar los productos activos 
+    prod=Producto.objects.filter(estado=True).order_by('nombre_producto') #filtar los productos activos 
+    #forma_pago = FormaPago.objects.all()
+    #tipo_factura = TipoFactura.objects.all()
     form_compras={} #fumulario vacio
     contexto={}
 
@@ -130,6 +133,8 @@ def compras(request,compra_id=None):
                 'sub_total': enc.sub_total,
                 'descuento': enc.descuento,
                 'total':enc.total
+                #'forma_pago': enc.forma_pago,
+                #'tipo_factura':enc.tipo_factura
             }
             form_compras = ComprasEncForm(e) #se le pasan los datos al formulario
         else: #si no existe el encabezado
@@ -138,6 +143,8 @@ def compras(request,compra_id=None):
         contexto={'productos':prod,'encabezado':enc,'detalle':det,'form_enc':form_compras} #se envian los contextos a la plantilla  
 
     if request.method=='POST':
+        #fp = FormaPago.objects.get(pk=forma_pago)
+        #tf = TipoFactura.objects.get(pk=tipo_factura)
         fecha_compra = request.POST.get("fecha_compra")
         observacion = request.POST.get("observacion")
         no_factura = request.POST.get("no_factura")
@@ -151,6 +158,8 @@ def compras(request,compra_id=None):
             prov=Proveedor.objects.get(pk=proveedor)
 
             enc = ComprasEnc(
+                #forma_pago = fp,
+                #tipo_factura = tf,
                 fecha_compra=fecha_compra,
                 observacion=observacion,
                 no_factura=no_factura,

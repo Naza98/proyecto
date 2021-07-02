@@ -9,6 +9,19 @@ class ClienteAdmin(admin.ModelAdmin):
         'numero_dni',
     ]
 
+class TipoFacturaAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'descripcion'
+    ]    
+
+class FormaPagoAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'descripcion'
+    ]    
+
+
 class FacturaEncAdmin(admin.ModelAdmin):
     list_display = [
         'cliente',
@@ -24,6 +37,6 @@ class FacturaEncAdmin(admin.ModelAdmin):
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(FacturaEnc, FacturaEncAdmin)
 admin.site.register(FacturaDet)
-admin.site.register(FormaPago)
-admin.site.register(TipoFactura)
+admin.site.register(FormaPago, FormaPagoAdmin)
+admin.site.register(TipoFactura, TipoFacturaAdmin)
 

@@ -10,7 +10,7 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model=Cliente
         fields=['nombres','apellidos', 'tipo_documento' ,'numero_dni', 'fecha_nacimiento', 'sexo','tipo',
-            'celular', 'email', 'barrio', 'calle', 'altura', 'manzana', 'departamento', 'piso', 'observacion', 'estado']
+            'celular', 'email', 'barrio', 'calle', 'altura', 'casa', 'manzana', 'departamento', 'piso', 'observacion', 'estado']
         exclude = ['um','fm','uc','fc']
 
     def __init__(self, *args, **kwargs):
