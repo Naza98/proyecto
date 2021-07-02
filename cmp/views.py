@@ -28,6 +28,12 @@ class ProveedorView(SinPrivilegios, generic.ListView):
     context_object_name = "obj"
     permission_required="cmp.view_proveedor"
 
+class ProveedorDetail(SinPrivilegios, generic.DetailView):
+    model = Proveedor   
+    template_name = "cmp/proveedor_detail.html"
+    permission_required="cmp.view_proveedor"
+
+
 class ProveedorNew(SuccessMessageMixin, SinPrivilegios,\
                    generic.CreateView):
     model=Proveedor

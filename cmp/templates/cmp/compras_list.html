@@ -18,12 +18,23 @@
   </div>
   <!-- Card Body -->
   <div class="card-body">  
+    <div class="row">
+      <div class="col-md-3">
+        <input type="text" class="form-control" name="f1" id="f1" readonly placeholder="Fecha Desde...">
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" name="f2" id="f2" readonly placeholder="Fecha Hasta...">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary" type="button" id="btnPrint"><i class="fa fa-print"></i> Imprimir Reporte de Compras</button>
+      </div>
+  </div>
+  <hr>
     {% if not obj %}
     <div class="alert alert-info">No se encontraron resultados</div>
     {% endif %}
     <div class="buttons-toolbar">
       <a class="btn btn-success" href="{% url 'cmp:compras_new' %}"><i class="fa fa-plus"></i> Nueva Compra</a>
-      <a class="btn btn-primary" href="{% url 'cmp:compras_print_all' %}"><i class="fa fa-print"></i> Imprimir Reporte de Compras</a>
     </div>
     <table 
       id="true"
@@ -60,7 +71,7 @@
           <td>${{ item.total }}</td>
           <td>
            <!-- <a class="btn btn-warning btn-circle" href="{% url 'cmp:compras_edit' item.id %}"><i class="far fa-edit"></i></a>-->
-            <a class="btn btn-success btn-circle" href="{% url 'cmp:compras_print_one' item.id %}" target="reportes"><i class="fas fa-print"></i></a>
+            <a class="btn btn-primary btn-circle" href="{% url 'cmp:compras_print_one' item.id %}" target="reportes"><i class="fas fa-print"></i></a>
           </td>
         </tr>
         {% endfor %}
@@ -69,3 +80,34 @@
   </div>
 </div>
 {% endblock %}
+
+{% block js_page %}
+<script>
+  $(function(){
+    $("#f1, #f2").datetimepicker({
+        format: 'Y-m-d',
+        timepicker:false
+    });
+  
+    $("#btnPrint").click(function(e){
+      e.preventDefault();
+      var f1,f2;
+      f1 = $("#f1").val();
+      f2 = $("#f2").val();
+      if(f1=="" || f1==null){
+        f1="2019-06-01";
+      }
+      if(f2=="" || f2==null){
+        var d = new Date();
+        var f2 = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+      }
+      
+      var url = "imprimir-todas/" + f1 + "/" + f2;
+  
+      window.open(url,'compras');
+      
+    });
+  });
+</script>
+{% endblock %}
+  

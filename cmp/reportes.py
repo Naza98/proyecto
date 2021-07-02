@@ -6,6 +6,9 @@ from django.template import Context
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.utils import timezone
+from django.shortcuts import render
+from django.utils.dateparse import parse_date
+from datetime import timedelta
 
 from .models import ComprasEnc, ComprasDet
 
@@ -97,3 +100,22 @@ def imprimir_compra(request, compra_id):
     return response
 
 
+
+def imprimir_compras_list(request,f1,f2):
+    template_name="cmp/compras2_print_all.html"
+
+    f1=parse_date(f1)
+    f2=parse_date(f2)
+    f2=f2 + timedelta(days=1)
+
+    cmp = ComprasEnc.objects.filter(fecha_compra__gte=f1,fecha_compra__lt=f2)
+    f2=f2 - timedelta(days=1)
+    
+    context = {
+        'request':request,
+        'f1':f1,
+        'f2':f2,
+        'cmp':cmp
+    }
+
+    return render(request,template_name,context)

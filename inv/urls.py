@@ -8,7 +8,8 @@ from .views import ActualizarPrecioTemplateView, CategoriaView, CategoriaNew, Ca
     HistorialPreciosProductos, MovimientoView, MovimientoNew, MovimientoEdit
     
 
-from .reportes import historial_precios_productos, imprimir_movimientos, movimiento_unico  
+from .reportes import historial_precios_productos, imprimir_movimientos, movimiento_unico, imprimir_movimientos_list, \
+    imprimir_historial_precios  
 
 urlpatterns = [
     path('categorias/',CategoriaView.as_view(), name='categoria_list'),
@@ -35,6 +36,7 @@ urlpatterns = [
     path('productos/detalle/<int:pk>', ProductoDetail.as_view(), name='producto_detalle'),
     path('productos/historial_precios',HistorialPreciosProductos.as_view(), name="historial_precios"),
     path('productos/historial_precios_print_all', historial_precios_productos, name='historial_precios_print_all'),
+    path('productos/imprimir-todos/<str:f1>/<str:f2>',imprimir_historial_precios, name="historial_imprimir_all"),
     #para actualizar precios 
     path('productos/actualizar_precios',  ActualizarPrecioTemplateView.as_view(), name='actualizar-precios'), 
 
@@ -44,6 +46,7 @@ urlpatterns = [
     path('movimientos/edit/<int:pk>',MovimientoEdit.as_view(), name="movimiento_edit"),
     path('movimientos/imprimir_movimientos', imprimir_movimientos, name='imprimir_movimientos'),
     path('movimientos/<int:movimiento_id>/imprimir', movimiento_unico, name='movimiento_print_one'),
+    path('movimientos/imprimir-todos/<str:f1>/<str:f2>',imprimir_movimientos_list, name="movimiento_imprimir_all"),
     
     #path('um/',UMView.as_view(), name="um_list"),
     #path('um/new',UMNew.as_view(), name="um_new"),

@@ -15,5 +15,5 @@ urlpatterns = [
     path('sin_privilegios/', HomeSinPrivilegios.as_view(), name='sin_privilegios'),
     path('CantidadProductosVendidos/', CantidadProductosVendidos, name='CantidadProductosVendidos'),
     path('ProductosPorCategoria/', ProductosPorCategoria, name='ProductosPorCategoria'),
-    path('ProductosMenosVendidos/', ProductosMenosVendidos, name='ProductosMenosVendidos'),
+    path('ProductosMenosVendidos/', ProductosMenosVendidos, name='productos_menos_vendidos'),
 ]

@@ -109,6 +109,26 @@ def CantidadProductosVendidos(request):
         c = c + 1 
     return JsonResponse(data)
 
+
+
+# Productos mas vendidos por Categoria
+def ProductosPorCategoria(request):
+    qs = Producto.objects.values('subcategoria__categoria__descripcion').annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')
+    import json
+    data ={}                                                            
+    c = 0                                                            
+    for p in qs:                                                       
+        obj = {                                                        
+            c: {                                                        
+                "label":p['subcategoria__categoria__descripcion'],
+                "data":p['num_prod']
+            } 
+        }
+        data.update(obj)                                                
+        c = c + 1 
+    return JsonResponse(data)
+
+
 # Los 5 Productos menos vendidos
 def ProductosMenosVendidos(request):
     qs = Producto.objects.annotate(num_prod=Sum('facturadet__cantidad')).order_by('num_prod')[:5]
@@ -126,25 +146,7 @@ def ProductosMenosVendidos(request):
         c = c + 1 
     return JsonResponse(data)
 
-# Productos mas vendidos por 
-def ProductosPorCategoria(request):
-    qs = Producto.objects.values('subcategoria').annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')
-    import json
-    data ={}                                                            
-    c = 0                                                            
-    for p in qs:                                                       
-        obj = {                                                        
-            c: {                                                        
-                "label":p.subcategoria,
-                "data":p.num_prod
-            } 
-        }
-        data.update(obj)                                                
-        c = c + 1 
-    return JsonResponse(data)
-
-
-#cantidad = Producto.objects.values('subcategoria').annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')
+#cantidad = Producto.objects.values('subcategoria__descripcion').annotate(num_prod=Sum('facturadet__cantidad')).order_by('-num_prod')
 #print(cantidad)
 
 

@@ -1,0 +1,23 @@
+{% extends 'base/base.htnl' %}
+{% load static %}
+
+
+{% block page_content %}
+<!--Gráfico de productos menos vendidos-->
+<div class="col-md-6">
+    <h4 class="m-0 font-weight-bold text-primary"> Top 5 Productos menos vendidos</h4>
+    <div id="container" style="width: 80%; height: 80%;">
+        <canvas id="grafico" width="400" height="400"></canvas>
+    </div>
+</div>
+{% endblock  %}
+
+
+
+{% block js_page %}
+
+
+<script src="{% static 'charts/charts.min.js' %}"></script>
+<script src="{% static 'graficos/productos_menos_vendidos.js' %}"></script>
+
+{% endblock %}

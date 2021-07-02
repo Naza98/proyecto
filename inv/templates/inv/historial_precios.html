@@ -9,6 +9,20 @@
   </div>
   <!-- Card Body -->
   <div class="card-body">
+
+    <div class="row">
+      <div class="col-md-3">
+        <input type="text" class="form-control" name="f1" id="f1" readonly placeholder="Fecha Desde...">
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" name="f2" id="f2" readonly placeholder="Fecha Hasta...">
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary" type="button" id="btnPrint"><i class="fa fa-print"></i> Imprimir Historial de Precios</button>
+      </div>
+  </div>
+  <hr>
+
     {% if not obj %}
     <div class="alert alert-info">No se encontraron resultados</div>
     {% endif %}
@@ -30,7 +44,6 @@
         {% endfor %}
       </tbody>
     </table>
-    <a class="btn btn-primary" href="{% url 'inv:historial_precios_print_all' %}" target="reportes"><i class="fas fa-print"></i> Imprimir Historial</a>
   </div>
 </div>
 {% endblock %}
@@ -66,4 +79,31 @@
     });
   });
   </script>
+  <script>
+    $(function(){
+      $("#f1, #f2").datetimepicker({
+          format: 'Y-m-d',
+          timepicker:false
+      });
+    
+      $("#btnPrint").click(function(e){
+        e.preventDefault();
+        var f1,f2;
+        f1 = $("#f1").val();
+        f2 = $("#f2").val();
+        if(f1=="" || f1==null){
+          f1="2019-06-01";
+        }
+        if(f2=="" || f2==null){
+          var d = new Date();
+          var f2 = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+        }
+        
+        var url = "imprimir-todos/" + f1 + "/" + f2;
+    
+        window.open(url,'productos');
+        
+      });
+    });
+    </script>
 {% endblock %}

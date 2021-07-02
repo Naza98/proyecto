@@ -295,7 +295,7 @@ class ProductoView(SinPrivilegios, generic.ListView):
 class ProductoDetail(SinPrivilegios, generic.DetailView):
     model = Producto   
     template_name = "inv/producto_detail.html"
-    permission_required="inv.view_producto_detail"
+    permission_required="inv.view_producto"
 
 
 

@@ -71,35 +71,34 @@
 <div class="row">
     <!--Gráfico de productos mas vendidos-->
     <div class="col-md-6">
-        <h4 class="m-0 font-weight-bold text-primary">Top 5 Productos más vendidos</h4>
+        <h4 class="m-0 font-weight-bold text-primary">Los 5 productos más vendidos</h4>
         <div id="container" style="width: 80%; height: 80%;">
             <canvas id="myChart" width="400px" height="400px"></canvas>
         </div>
     </div>
 
-    <!--Gráfico de productos menos vendidos-->
     <div class="col-md-6">
-        <h4 class="m-0 font-weight-bold text-primary"> Top 5 Productos menos vendidos</h4>
-        <div id="container" style="width: 80%; height: 80%;">
-            <canvas id="grafico" width="400" height="400"></canvas>
-        </div>
-    </div> <br><br>
-
-    <div class="col-md-6">
-        <h4 class="m-0 font-weight-bold text-primary"> Productos mas vendidos por Subcategoría</h4>
+        <h4 class="m-0 font-weight-bold text-primary"> Productos mas vendidos por Categoría</h4>
         <div id="container" style="width: 80%; height: 80%;">
             <canvas id="grafico2" width="400" height="400"></canvas>
         </div>
     </div>
-</div>
+</div> <br><br>
 
+    <!--Gráfico de productos menos vendidos-->
+    <center><div class="col-md-6 ">
+        <h4 class="m-0 font-weight-bold text-primary"> Los 5 productos menos vendidos</h4>
+        <div id="container" style="width: 80%; height: 80%;">
+            <canvas id="grafico" width="400" height="400"></canvas>
+        </div>
+    </div></center>
 {% endblock  %}
 
 
 {% block js_page %}
 <script src="{% static 'charts/charts.min.js' %}"></script>
-<script src="{% static 'graficos/productos_menos_vendidos.js' %}"></script>
 <script src="{% static 'graficos/productos_mas_vendidos.js' %}"></script>
 <script src="{% static 'graficos/productos_mas_vendidos_subcategorias.js' %}"></script>
+<script src="{% static 'graficos/productos_menos_vendidos.js' %}"></script>
 
 {% endblock %}

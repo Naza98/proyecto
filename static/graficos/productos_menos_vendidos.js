@@ -12,7 +12,7 @@ $.ajax({
 
     let ctx = document.getElementById('grafico').getContext('2d');
     let myChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{

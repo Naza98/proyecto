@@ -155,7 +155,7 @@
       </li>
 
       <!--Presupuestos-->
-     <!-- <li class="nav-item">
+      <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePresupuestos"
           aria-expanded="true" aria-controls="collapsePresupuestos">
           <i class="fas fa-receipt"></i>
@@ -164,10 +164,10 @@
         <div id="collapsePresupuestos" class="collapse" aria-labelledby="headingUtilities"
           data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="#">Presupuestos</a>
+            <a class="collapse-item" href="{% url 'pre:presupuestos_view' %}">Presupuestos</a>
           </div>
         </div>
-      </li>-->
+      </li>
 
       <!--Reportes e informes-->
       {% if request.user.is_staff %}
@@ -180,7 +180,6 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <a href="{% url 'inv:historial_precios' %}" class="collapse-item">Historial de precios</a>
-            <a class="collapse-item" href="{% url 'fac:total' %}"> Gráfico compras-ventas</a>
             <a class="collapse-item" href="{% url 'fac:ventas_informe' %}"> Gráfico de ventas diarias</a>
           </div>
         </div>

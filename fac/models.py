@@ -43,7 +43,7 @@ class Cliente(ClaseModelo):
 
     nombres = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
-    tipo_documento = models.CharField(max_length=10, choices=TIPO_DOCUMENTO, default=Documento_Unico_Identidad)
+    tipo_documento = models.CharField(max_length=50, choices=TIPO_DOCUMENTO, default=Documento_Unico_Identidad)
     numero_dni = models.CharField(max_length=8, null=True, blank=True, unique=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)
     sexo = models.CharField(max_length=10, choices=GENERO)

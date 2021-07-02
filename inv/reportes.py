@@ -6,6 +6,9 @@ from django.template import Context
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.utils import timezone
+from django.shortcuts import render
+from django.utils.dateparse import parse_date
+from datetime import timedelta
 from .models import HistorialPreciosVenta, Producto, Movimiento
 
 def link_callback(uri, rel):
@@ -120,3 +123,45 @@ def movimiento_unico(request, movimiento_id):
     if pisaStatus.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
+
+
+def imprimir_movimientos_list(request,f1,f2):
+    template_name="movimientos/movimiento2_print_all.html"
+
+    f1=parse_date(f1)
+    f2=parse_date(f2)
+    f2=f2 + timedelta(days=1)
+
+    mov = Movimiento.objects.filter(fecha__gte=f1,fecha__lt=f2)
+    f2=f2 - timedelta(days=1)
+    
+    context = {
+        'request':request,
+        'f1':f1,
+        'f2':f2,
+        'mov':mov
+    }
+
+    return render(request,template_name,context)
+    
+
+def imprimir_historial_precios(request,f1,f2):
+    template_name="inv/historial2_precios_print_all.html"
+
+    f1=parse_date(f1)
+    f2=parse_date(f2)
+    f2=f2 + timedelta(days=1)
+
+    historial = HistorialPreciosVenta.objects.filter(fecha_modificacion__gte=f1,fecha_modificacion__lt=f2).order_by('fecha_modificacion', 'producto__nombre_producto')
+    productos = Producto.objects.filter(estado=True).order_by('nombre_producto')
+    f2=f2 - timedelta(days=1)
+    
+    context = {
+        'request':request,
+        'f1':f1,
+        'f2':f2,
+        'histo':historial,
+        'productos':productos
+    }
+
+    return render(request,template_name,context)    

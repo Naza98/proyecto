@@ -3,6 +3,25 @@ from django.contrib import admin
 from .models import Categoria, SubCategoria, Marca, Producto, \
     TipoMovimiento, Movimiento, HistorialPreciosVenta, Motivo
 
+
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'descripcion'
+    ]
+
+class SubCategoriaAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'descripcion'
+    ]
+
+class MarcaAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'descripcion'
+    ]
+
 class ProductoAdmin(admin.ModelAdmin):
     list_display = [
         'codigo',
@@ -49,9 +68,9 @@ class HistorialPreciosVentaAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Producto, ProductoAdmin)
-admin.site.register(Categoria)
-admin.site.register(SubCategoria)
-admin.site.register(Marca)
+admin.site.register(Categoria, CategoriaAdmin)
+admin.site.register(SubCategoria, SubCategoriaAdmin)
+admin.site.register(Marca, MarcaAdmin)
 admin.site.register(TipoMovimiento, TipoMovimientoAdmin)
 admin.site.register(Motivo, MotivoAdmin)
 admin.site.register(Movimiento,MovimientoAdmin)

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Presupuesto</title>
+
+    <style type="text/css">
+    @page {
+        size: letter;
+        margin: 1cm;
+    }
+
+    .table td .numero{
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h4>Sistema BR-SCF</h4>
+            </div>
+
+            <div class="list-group">
+                <p>No. de Presupuesto: {{ presupuesto.id}} </p>
+                <hr>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Plazo Hasta</th>
+                        <th>Fecha de Emisión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in detalle %}
+                    <tr>
+                        <td><span class="small">{{ item.cliente }}</span></td>
+                        <td class="small">{{ item.producto }}</td>
+                        <td class="small">${{ item.precio_unitario }}</td>
+                        <td class="numero">{{ item.cantidad }}</td>
+                        <td class="numero">${{ item.total }}</td>
+                        <td><b>{{ item.plazo|date:"d/m/Y"}}</b></td>
+                        <td><b>{{ item.fecha|date:"d/m/Y"}}</b></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            <center>
+            <h3>Estimado/a cliente, recuerde: una vez finalizado el plazo de éste comprobante, el valor del producto
+                podría variar (o no), lo cuál nos correspodería cobrar el precio actualizado. </h3> 
+            <h3>Atte: La Empresa. </h3>
+            </center>
+        </div>
+    </div>
+</body> 
+</html> 

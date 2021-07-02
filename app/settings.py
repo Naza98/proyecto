@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'cmp',
     'fac',
     'domicilios',
+    'presupuestos',
     'django_userforeignkey',
     'rest_framework',
     'colorfield',

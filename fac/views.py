@@ -26,11 +26,16 @@ from django.db.models import Sum
 class ClienteView(SinPrivilegios, generic.ListView):
     model = Cliente
     template_name = "fac/cliente_list.html"
-    queryset = Cliente.objects.filter(estado=True).exclude(nombres="final")
+    queryset = Cliente.objects.filter(estado=True).exclude(nombres="final").order_by('apellidos')
     obj = queryset
     context_object_name = "obj"
     permission_required="fac.view_cliente"
 
+
+class ClienteDetail(SinPrivilegios, generic.DetailView):
+    model = Cliente   
+    template_name = "fac/cliente_detail.html"
+    permission_required="fac.view_cliente"
 
 
 class ClienteNew(SuccessMessageMixin,SinPrivilegios, \
@@ -49,9 +54,9 @@ class ClienteNew(SuccessMessageMixin,SinPrivilegios, \
 
     def get_context_data(self, **kwargs):
         context = super(ClienteNew, self).get_context_data(**kwargs)
-        context["provincias"] = Provincia.objects.all()
-        context["localidades"] = Localidad.objects.all()
-        context["barrios"] = Barrio.objects.all()
+        context["provincias"] = Provincia.objects.all().order_by('nombre_provincia')
+        context["localidades"] = Localidad.objects.all().order_by('nombre_localidad')
+        context["barrios"] = Barrio.objects.all().order_by('nombre_barrio')
         return context
 
 
@@ -75,9 +80,9 @@ class ClienteEdit(SuccessMessageMixin,SinPrivilegios, \
         pk = self.kwargs.get('pk')
 
         context = super(ClienteEdit, self).get_context_data(**kwargs)
-        context["provincias"] = Provincia.objects.all()
-        context["localidades"] = Localidad.objects.all()
-        context["barrios"] = Barrio.objects.all()
+        context["provincias"] = Provincia.objects.all().order_by('nombre_provincia')
+        context["localidades"] = Localidad.objects.all().order_by('nombre_localidad')
+        context["barrios"] = Barrio.objects.all().order_by('nombre_barrio')
         context["obj"] = Cliente.objects.filter(pk=pk).first()
         return context
 
@@ -264,25 +269,3 @@ def GraficoVentas(request):
     return render(request, template_name, context)
 
 
-
-
-def CmpFac(request):
-
-    compras = ComprasEnc.objects.all().aggregate(total=Sum('total'))    
-    ventas = FacturaEnc.objects.all().aggregate(total=Sum('total'))         
-    template_name = 'fac/informes_estadisticos/totales.html'
-    context = {
-        "ventas":ventas,
-        "compras":compras
-    }
-    return render(request, template_name, context)
-
-'''
-anio = datetime.now().year
-for m in range(1,13):
-    ventasanuales = FacturaEnc.objects.filter(fecha__year=anio, fecha__month=m).aggregate(Sum('total'))
-    print(ventasanuales)
-'''
-
-
-    

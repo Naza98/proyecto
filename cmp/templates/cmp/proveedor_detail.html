@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block page_content %}
+<div class="card shadow mb-4">
+  <!-- Card Header - Dropdown -->
+  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+    <h6 class="m-0 font-weight-bold text-primary">Detalle del Proveedor {{object.descripcion}}</h6>
+
+  </div>
+  <!-- Card Body -->
+
+  <div class="card-body">
+    <ul>
+        <li>Persona de contacto: <b>{{object.contacto}}</b></li><br>
+        
+        <p>Contacto <i class="fas fa-phone"></i></p>   
+        <li>Celular <b>{{object.telefono}}</b></li>
+        <li>Email <b>{{object.email}}</b></li><br>
+
+        <p>Domicilio <i class="fas fa-home"></i></p>
+        <li>Provincia <b>{{object.barrio.localidad.provincia.nombre_provincia}}</b></li>
+        <li>Localidad <b>{{object.barrio.localidad.nombre_localidad}}</b></li>
+        <li>Barrio <b>{{object.barrio.nombre_barrio}}</b></li>
+        <li>Calle <b>{{object.calle|default_if_none:'--' }}</b></li>
+        <li>Casa <b>{{object.casa|default_if_none:'--' }}</b></li>
+        <li>Altura <b>{{object.altura|default_if_none:'--' }}</b></li>
+        <li>Manzana <b>{{object.manzana|default_if_none:'--' }}</b></li>
+        <li>Depto <b>{{object.departamento|default_if_none:'--' }}</b></li>
+        <li>Piso <b>{{object.piso|default_if_none:'--' }}</b></li>
+    </ul>
+          
+</div>
+{% endblock %}

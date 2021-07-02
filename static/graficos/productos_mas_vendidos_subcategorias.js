@@ -1,7 +1,10 @@
 $.ajax({
-    url: "CantidadProductosVendidos",
+    url: "ProductosPorCategoria",
     type: "GET",
 }).done(function (respuesta) {
+
+    console.log(respuesta);
+
     let labels = []
     let data = []
 

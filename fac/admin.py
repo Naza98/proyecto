@@ -24,6 +24,7 @@ class FormaPagoAdmin(admin.ModelAdmin):
 
 class FacturaEncAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'cliente',
         'fecha',
         'sub_total',
@@ -33,10 +34,19 @@ class FacturaEncAdmin(admin.ModelAdmin):
         'tipo_factura'
     ]
 
+class FacturaDetAdmin(admin.ModelAdmin):
+    list_display = [
+        'factura',
+        'producto',
+        'cantidad',
+        'precio',
+        'total'
+    ]
+
 
 admin.site.register(Cliente, ClienteAdmin)
 admin.site.register(FacturaEnc, FacturaEncAdmin)
-admin.site.register(FacturaDet)
+admin.site.register(FacturaDet, FacturaDetAdmin)
 admin.site.register(FormaPago, FormaPagoAdmin)
 admin.site.register(TipoFactura, TipoFacturaAdmin)
 

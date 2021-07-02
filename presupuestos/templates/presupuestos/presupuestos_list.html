@@ -1,0 +1,196 @@
+{% extends 'base/base.html' %}
+
+{% block page_content %}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <form method="POST" class="form-inline">
+            <div class="col-xl-12 col-md-12 mb-12">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Nuevo Presupuesto
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">{{form.cliente.label}}</div>
+                                        <div class="col-md-6">{{form.cliente}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">{{form.producto.label}}</div>
+                                        <div class="col-md-6">{{form.producto}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">{{form.precio_unitario.label}}</div>
+                                        <div class="col-md-6">{{form.precio_unitario}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">{{form.cantidad.label}}</div>
+                                        <div class="col-md-6">{{form.cantidad}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">{{form.total.label}}</div>
+                                        <div class="col-md-6">{{form.total}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">Plazo Hasta</div>
+                                        <div class="col-md-6">{{form.plazo}}</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="col-md-6">Fecha de Emisión</div>
+                                        <div class="col-md-6">{{form.fecha}}</div>
+                                    </div>
+                                
+                                    {{variable}}
+                                    
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="row">
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-success"><span class="fa fa-save"></span>
+                                            Guardar</button>
+                                        <a href="/" class="btn btn-danger"><span class="fa fa-undo"></span> Cancelar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <!-- Card Header - Dropdown -->
+    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Presupuestos Generados</h6>
+    </div>
+    <!-- Card Body -->
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+              <input type="text" class="form-control" name="f1" id="f1" readonly placeholder="Fecha Desde...">
+            </div>
+            <div class="col-md-3">
+              <input type="text" class="form-control" name="f2" id="f2" readonly placeholder="Fecha Hasta...">
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary" type="button" id="btnPrint"><i class="fa fa-print"></i> Imprimir Reporte de Presupuestos</button>
+            </div>
+        </div>
+        <hr>
+        <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true"
+            data-show-toggle="true" data-show-fullscreen="true" data-toolbar=".buttons-toolbar" data-locale="es-NI">
+            <thead>
+                <th data-sortable="true" data-field="id">Id</th>
+                <th data-sortable="true" data-field="cliente">Cliente</th>
+                <th data-sortable="true" data-field="producto">Producto</th>
+                <th data-sortable="true" data-field="precio_unitario">Precio Unitario</th>
+                <th data-sortable="true" data-field="cantidad">Cantidad</th>
+                <th data-sortable="true" data-field="total">Total</th>
+                <th data-sortable="true" data-field="plazo">Plazo Hasta</th>
+                <th data-sortable="true" data-field="fecha">Fecha de Emisión</th>
+                <th class="all">Acciones</th>
+            </thead>
+            <tbody>
+                {% for item in losp%}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.cliente }}</td>
+                    <td>{{ item.producto }} - {{ item.producto.marca }}</td>
+                    <td>${{ item.precio_unitario }}</td>
+                    <td>{{ item.cantidad }}</td>
+                    <td>{{ item.total }}</td>
+                    <td>{{ item.plazo|date:"d/m/Y"}}</td>
+                    <td>{{ item.fecha|date:"d/m/Y"}}</td>
+                    <td>
+                        <a href="{% url 'pre:presupuesto_print_one' item.id %}" class="btn btn-primary btn-circle" role="button"><i class="fas fa-print"></i></a>
+                        <a href="{% url 'pre:eliminar_presupuesto' item.id %}" class="btn btn-danger btn-circle" role="button"><i class="far fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_page %}
+<script type="text/javascript">
+    //CALCULAMOS EL TOTAL AL CAMBIAR CAMPO CANTIDAD O PRECIO
+    $('#id_cantidad, #id_precio_unitario').keyup(function () {
+
+        cantidad = $('#id_cantidad').val();
+        precio_unitario = $('#id_precio_unitario').val();
+        total = cantidad * precio_unitario;
+        $('#id_total').val(parseFloat(total));
+
+    });
+
+
+
+
+    //cuando cambio el elemento del select busco el precio y lo cargo.
+    //TAMBIEN MULTIPLICO CANTIDAD * PRECIO Y CARGO EL TOTAL
+    $('#id_producto').change(function () {
+
+        var prod = $('#id_producto option:selected').html();
+
+        data = {
+            'prod': prod
+        };
+
+        $.ajax({
+            type: "GET",
+            url: '/presupuestos/pre/getPrecio',
+            data: data,
+            success: function (result) {
+                let resultado = result;
+                console.log(resultado);
+                $('#id_precio_unitario').val(resultado); //CARGO EL PRECIO QUE LE CORRESPONDE.
+
+                cantidad = $('#id_cantidad').val();
+                $('#id_total').val(resultado * cantidad); //CARGO EL TOTAL.
+            },
+        });
+
+
+
+
+
+    });
+</script>
+
+<script>
+    $(function(){
+      $("#f1, #f2").datetimepicker({
+          format: 'Y-m-d',
+          timepicker:false
+      });
+    
+      $("#btnPrint").click(function(e){
+        e.preventDefault();
+        var f1,f2;
+        f1 = $("#f1").val();
+        f2 = $("#f2").val();
+        if(f1=="" || f1==null){
+          f1="2019-06-01";
+        }
+        if(f2=="" || f2==null){
+          var d = new Date();
+          var f2 = d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate();
+        }
+        
+        var url = "imprimir-todos/" + f1 + "/" + f2;
+    
+        window.open(url,'pre');
+        
+      });
+    });
+    </script>
+{% endblock  %}
